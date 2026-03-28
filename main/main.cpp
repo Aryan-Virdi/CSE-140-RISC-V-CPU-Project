@@ -12,8 +12,6 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
-const int ERROR_CODE = -1;
-
 // CPU's program counter
 int PC = 0;
 
