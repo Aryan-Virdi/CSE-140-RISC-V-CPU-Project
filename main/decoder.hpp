@@ -381,7 +381,7 @@ int32_t twos_complement(uint32_t rawValue, int bits){
         rawValue -= (1 << bits);           // If so, subtract that next power of 2.
     }
 
-    return static_cast<int32_t>(rawValue);
+    return (static_cast<int32_t>(rawValue));
 }
 
 /*
@@ -518,7 +518,7 @@ int32_t signExtend(uint32_t bits, int originalBits){
     int shiftAmount = 32 - originalBits;
     uint32_t leftShifted = bits << shiftAmount;
 
-    return ((static_cast<int32_t>(leftShifted)) >> shiftAmount );
+    return ((static_cast<int32_t>(leftShifted)) >> shiftAmount);
 }
 
 /*
