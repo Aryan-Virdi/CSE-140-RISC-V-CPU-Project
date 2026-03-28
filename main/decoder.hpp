@@ -120,6 +120,9 @@ class Instruction {
     int funct7;
     int imm;
 
+    int rs1_value;
+    int rs2_value;
+
     // Print R-Type fields.
     void print_R_Format(){
         std::cout << "Instruction Type: " << getFormat() << std::endl;
@@ -182,6 +185,9 @@ class Instruction {
         this->funct3 = FUNCT3_EMPTY;
         this->funct7 = FUNCT7_EMPTY;
         this->imm = IMM_EMPTY;
+
+        this->rs1_value = IMM_EMPTY;
+        this->rs2_value = IMM_EMPTY;
     }
 
     // Parameterized Constructor.
@@ -194,6 +200,9 @@ class Instruction {
         this->funct3 = funct3;
         this->funct7 = funct7;
         this->imm = imm;
+
+        this->rs1_value = IMM_EMPTY;
+        this->rs2_value = IMM_EMPTY;
     }
 
     // Getters.
@@ -206,15 +215,14 @@ class Instruction {
     int getFunct7(){ return this->funct7; }
     int getImm(){ return this->imm; }
 
+    // Setters.
+    void setRs1Value(int value){ this->rs1_value = value; }
+    void setRs2Value(int value){ this->rs2_value = value; }
+
+
     // Print fields according to type.
     void printInfo(){
         Format type = getFormat();
-        // if (type == Format::R){ print_R_Format(); }
-        // else if (type == Format::SB){ print_SB_Format(); }
-        // else if (type == Format::I){ print_I_Format(); }
-        // else if (type == Format::S){ print_S_Format(); }
-        // else if (type == Format::UJ){ print_UJ_Format(); }
-        // else if (type == Format::UNKNOWN){ print_UNKNOWN_Format(); }
 
         // Optimization using switch case (though negligible).
         switch(type){
@@ -453,50 +461,43 @@ Instruction decode_UJ(const uint32_t& instruction){
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
 }
 
-int main(int argc, char* argv[]) {
-    std::string binaryInput;
-    uint32_t instruction;
-    Instruction defaultInstruction = Instruction();
+Instruction decode(uint32_t instruction, const int registerFile[32]) {
+    Instruction decodedInstruction = Instruction();
 
-    while(true){
-        std::cout << "Enter an instruction: ";   // Prompt machine instruction.
-        std::cin >> binaryInput;
-        std::cout << std::endl;
+    Format type = getFormat(instruction);                       // Get instruction format.
 
-        if (binaryInput == "Exit" || binaryInput == "exit") break;  // Exit gracefully.
-        try {
+    switch(type){
+        case Format::R:     
+            decodedInstruction = decode_R(instruction); 
+            decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
+            decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
+            break;
 
-            instruction = std::stoul(binaryInput, nullptr, 2);  // Parse string of binary into actual binary integer object.
+        case Format::SB:  
+            decodedInstruction = decode_SB(instruction); 
+            decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
+            decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
+            break;
 
-        } catch (const std::invalid_argument& e){
-            std::cerr << "Caught invalid argument for [binary] string to unsigned long conversion. Terminating program." << std::endl << "Error: " << "\"" << e.what() << "\"" << std::endl << "Exit Code: " << ERROR_CODE << std::endl << std::endl;
-            return ERROR_CODE;
-        }
+        case Format::I:   
+            decodedInstruction = decode_I(instruction); 
+            decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
+            break;
 
-        Format type = getFormat(instruction);                       // Get instruction format.
+        case Format::S:     
+            decodedInstruction = decode_S(instruction); 
+            decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
+            decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
+            break;
 
-        // Dispatch decoding based on format and print instruction's info.
-        // if (type == Format::R){ decode_R(instruction).printInfo(); }
-        // else if (type == Format::SB){ decode_SB(instruction).printInfo(); }
-        // else if (type == Format::I){ decode_I(instruction).printInfo(); }
-        // else if (type == Format::S){ decode_S(instruction).printInfo(); }
-        // else if (type == Format::UJ){ decode_UJ(instruction).printInfo(); }
+        case Format::UJ:   
+            decodedInstruction = decode_UJ(instruction); break;
 
-        switch(type){
-            case Format::R:       decode_R(instruction).printInfo(); break;
-            case Format::SB:      decode_SB(instruction).printInfo(); break;
-            case Format::I:       decode_I(instruction).printInfo(); break;
-            case Format::S:       decode_S(instruction).printInfo(); break;
-            case Format::UJ:      decode_UJ(instruction).printInfo(); break;
-            case Format::UNKNOWN: defaultInstruction.printInfo(); break;
-            default: 
-                std::cout << "Logically unreachable place reached. What?" << std::endl; return ERROR_CODE;
-        }
-
-        std::cout << std::endl;
+        default:
+            break;
     }
- 
-    return 0;
+
+    return decodedInstruction;
 }
 
 #endif
