@@ -505,9 +505,10 @@ Instruction decode_UJ(uint32_t instruction){
 }
 
 int32_t signExtend(uint32_t bits, int originalBits){
-    uint32_t leftShifted = bits << (32 - originalBits);
+    int shiftAmount = 32 - originalBits;
+    uint32_t leftShifted = bits << shiftAmount;
 
-    return static_cast<int32_t>(leftShifted) >> (32 - originalBits); 
+    return ((static_cast<int32_t>(leftShifted)) >> shiftAmount );
 }
 
 /*
@@ -519,7 +520,7 @@ int32_t signExtend(uint32_t bits, int originalBits){
 Instruction decode(uint32_t instruction, const int registerFile[32]) {
     Instruction decodedInstruction = Instruction();
 
-    Format type = getFormat(instruction);                       // Get instruction format.
+    Format type = getFormat(instruction);   // Get instruction format.
 
     switch(type){
         case Format::R:     
