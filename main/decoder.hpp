@@ -504,6 +504,13 @@ Instruction decode_UJ(uint32_t instruction){
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
 }
 
+/*
+    Parameter bits:             A 32-bit unsigned integer representing an immediate value.
+    Parameter originalBits:     An integer value representing how many bits in the parameter "bits" represent the immediate value.
+    
+    Returns:                    A 32-bit signed integer that should represent the original value in parameter bits, either
+                                left zero-extended or newly one-extended.
+*/
 int32_t signExtend(uint32_t bits, int originalBits){
     int shiftAmount = 32 - originalBits;
     uint32_t leftShifted = bits << shiftAmount;
@@ -523,13 +530,13 @@ Instruction decode(uint32_t instruction, const int registerFile[32]) {
     Format type = getFormat(instruction);   // Get instruction format.
 
     switch(type){
-        case Format::R:     
+        case Format::R:
             decodedInstruction = decode_R(instruction); 
             decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
             decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
             break;
 
-        case Format::SB:  
+        case Format::SB:
             decodedInstruction = decode_SB(instruction); 
             decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
             decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
