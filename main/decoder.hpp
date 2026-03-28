@@ -86,7 +86,9 @@ const int RS1_EMPTY = -1;
 const int RS2_EMPTY = -1;
 const int FUNCT3_EMPTY = 0;
 const int FUNCT7_EMPTY = 0;
-const int IMM_EMPTY = -999999999; // Very small number to show that the instruction object isn't given an [expectedly] proper immediate
+const int IMM_EMPTY = -999999999;   // Very small number to show that the instruction object isn't given an [expectedly] proper immediate
+
+const int I_TYPE_IMM_BITS = 12;     // Amount of bits of immediate in I-type instructions.
 
 const int ERROR_CODE = -1;
 
@@ -218,6 +220,7 @@ class Instruction {
     // Setters.
     void setRs1Value(int value){ this->rs1_value = value; }
     void setRs2Value(int value){ this->rs2_value = value; }
+    void setImm(int32_t value){ this ->imm = value; }
 
 
     // Print fields according to type.
@@ -545,6 +548,7 @@ Instruction decode(uint32_t instruction, const int registerFile[32]) {
         case Format::I:   
             decodedInstruction = decode_I(instruction); 
             decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
+            decodedInstruction.setImm(signExtend(decodedInstruction.getImm(), I_TYPE_IMM_BITS));
             break;
 
         case Format::S:     
