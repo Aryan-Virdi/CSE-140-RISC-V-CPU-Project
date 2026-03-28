@@ -6,10 +6,6 @@
 #include <unordered_map>
 #include <ostream>
 
-using std::string;
-using std::cout;
-using std::endl;
-
 enum class Format {
     R, I, S, SB, UJ, UNKNOWN    // Enum represents known "classes" of formats.
 };
@@ -126,53 +122,53 @@ class Instruction {
 
     // Print R-Type fields.
     void print_R_Format(){
-        cout << "Instruction Type: " << getFormat() << endl;
-        cout << "Operation: " << getOperation() << endl;
-        cout << "Rs1: x" << getRs1() << endl;
-        cout << "Rs2: x" << getRs2() << endl;
-        cout << "Rd: x" << getRd() << endl;
-        cout << "Funct3: " << getFunct3() << endl;
-        cout << "Funct7: " << getFunct7() << endl;
+        std::cout << "Instruction Type: " << getFormat() << std::endl;
+        std::cout << "Operation: " << getOperation() << std::endl;
+        std::cout << "Rs1: x" << getRs1() << std::endl;
+        std::cout << "Rs2: x" << getRs2() << std::endl;
+        std::cout << "Rd: x" << getRd() << std::endl;
+        std::cout << "Funct3: " << getFunct3() << std::endl;
+        std::cout << "Funct7: " << getFunct7() << std::endl;
     }
 
     // Print SB-type fields.
     void print_SB_Format(){
-        cout << "Instruction Type: " << getFormat() << endl;
-        cout << "Operation: " << getOperation() << endl;
-        cout << "Rs1: x" << getRs1() << endl;
-        cout << "Rs2: x" << getRs2() << endl;
-        cout << "Immediate: " << getImm() << endl;
+        std::cout << "Instruction Type: " << getFormat() << std::endl;
+        std::cout << "Operation: " << getOperation() << std::endl;
+        std::cout << "Rs1: x" << getRs1() << std::endl;
+        std::cout << "Rs2: x" << getRs2() << std::endl;
+        std::cout << "Immediate: " << getImm() << std::endl;
     }
 
     // Print I-Type fields.
     void print_I_Format(){
-        cout << "Instruction Type: " << getFormat() << endl;
-        cout << "Operation: " << getOperation() << endl;
-        cout << "Rs1: x" << getRs1() << endl;
-        cout << "Rd: x" << getRd() << endl;
-        cout << "Immediate: " << getImm() << endl;
+        std::cout << "Instruction Type: " << getFormat() << std::endl;
+        std::cout << "Operation: " << getOperation() << std::endl;
+        std::cout << "Rs1: x" << getRs1() << std::endl;
+        std::cout << "Rd: x" << getRd() << std::endl;
+        std::cout << "Immediate: " << getImm() << std::endl;
     }
 
     // Print S-Type fields.
     void print_S_Format(){
-        cout << "Instruction Type: " << getFormat() << endl;
-        cout << "Operation: " << getOperation() << endl;
-        cout << "Rs1: x" << getRs1() << endl;
-        cout << "Rs2: x" << getRs2() << endl;
-        cout << "Immediate: " << getImm() << endl;
+        std::cout << "Instruction Type: " << getFormat() << std::endl;
+        std::cout << "Operation: " << getOperation() << std::endl;
+        std::cout << "Rs1: x" << getRs1() << std::endl;
+        std::cout << "Rs2: x" << getRs2() << std::endl;
+        std::cout << "Immediate: " << getImm() << std::endl;
     }
 
     // Print UJ-Type fields.
     void print_UJ_Format(){
-        cout << "Instruction Type: " << getFormat() << endl;
-        cout << "Operation: " << getOperation() << endl;
-        cout << "Rd: x" << getRd() << endl;
-        cout << "Immediate: " << getImm() << endl;
+        std::cout << "Instruction Type: " << getFormat() << std::endl;
+        std::cout << "Operation: " << getOperation() << std::endl;
+        std::cout << "Rd: x" << getRd() << std::endl;
+        std::cout << "Immediate: " << getImm() << std::endl;
     }
 
     // Print unknown to show undefined format or bug.
     void print_UNKNOWN_Format(){
-        cout << "Unknown Instruction Format. Not implemented or misread?" << endl;
+        std::cout << "Unknown Instruction Format. Not implemented or misread?" << std::endl;
     }
 
     public:
@@ -458,14 +454,14 @@ Instruction decode_UJ(const uint32_t& instruction){
 }
 
 int main(int argc, char* argv[]) {
-    string binaryInput;
+    std::string binaryInput;
     uint32_t instruction;
     Instruction defaultInstruction = Instruction();
 
     while(true){
-        cout << "Enter an instruction: ";   // Prompt machine instruction.
+        std::cout << "Enter an instruction: ";   // Prompt machine instruction.
         std::cin >> binaryInput;
-        cout << endl;
+        std::cout << std::endl;
 
         if (binaryInput == "Exit" || binaryInput == "exit") break;  // Exit gracefully.
         try {
@@ -473,7 +469,7 @@ int main(int argc, char* argv[]) {
             instruction = std::stoul(binaryInput, nullptr, 2);  // Parse string of binary into actual binary integer object.
 
         } catch (const std::invalid_argument& e){
-            std::cerr << "Caught invalid argument for [binary] string to unsigned long conversion. Terminating program." << endl << "Error: " << "\"" << e.what() << "\"" << endl << "Exit Code: " << ERROR_CODE << endl << endl;
+            std::cerr << "Caught invalid argument for [binary] string to unsigned long conversion. Terminating program." << std::endl << "Error: " << "\"" << e.what() << "\"" << std::endl << "Exit Code: " << ERROR_CODE << std::endl << std::endl;
             return ERROR_CODE;
         }
 
@@ -494,10 +490,10 @@ int main(int argc, char* argv[]) {
             case Format::UJ:      decode_UJ(instruction).printInfo(); break;
             case Format::UNKNOWN: defaultInstruction.printInfo(); break;
             default: 
-                cout << "Logically unreachable place reached. What?" << endl; return ERROR_CODE;
+                std::cout << "Logically unreachable place reached. What?" << std::endl; return ERROR_CODE;
         }
 
-        cout << endl;
+        std::cout << std::endl;
     }
  
     return 0;
