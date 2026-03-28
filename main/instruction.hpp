@@ -78,6 +78,7 @@ std::ostream& operator<<(std::ostream& os, Operation o){
     }
 }
 
+// Defaults to indicate unused and misused fields.
 const int RD_EMPTY = -1;
 const int RS1_EMPTY = -1;
 const int RS2_EMPTY = -1;
@@ -90,22 +91,17 @@ const int I_TYPE_IMM_BITS = 12;     // Amount of bits of immediate in I-type ins
 // Encapsulates the data of the instruction as an object.
 class Instruction {
     /* 
-    Risc-V Instruction Bit Alignment
-    
-    [0, 6]
-    [7, 11]
-    [12, 14]
-    [15, 19]
-    [20, 24]
-    [25, 31]
+        Risc-V Instruction Bit Alignment
+        
+        [0, 6]
+        [7, 11]
+        [12, 14]
+        [15, 19]
+        [20, 24]
+        [25, 31]
 
-    Keeping the instructions as one object instead of multiple subclasses of Instruction is ideal for this
-    case due to computational overhead related to subclass hierarchies. 
-
-    The one-class design is better suited for this case because machine instructions are "known at runtime,"
-    and the alignment of fields across different formats match. For example, the immediate field of I-type
-    can be represented as the concatenation of R-type fields rs2 and funct7 (funct7 || rs2).
-
+        Keeping the instructions as one object instead of multiple subclasses of Instruction is ideal for this
+        case due to computational overhead related to subclass hierarchies.
     */
 
     Format format;
@@ -117,6 +113,11 @@ class Instruction {
     int funct7;
     int imm;
 
+    /*
+        Actual values of source register fields. Currently, they are not intended 
+        to be constructor-initialized, but are retrieved by the decoder function
+        manually.
+    */
     int rs1_value;
     int rs2_value;
 
@@ -172,7 +173,10 @@ class Instruction {
     }
 
     public:
-    // Default Constructor.
+    /* 
+        Default Constructor.
+        Initializes fields as all "empty"
+    */
     Instruction(){
         this->format = Format::UNKNOWN;
         this->operation = Operation::UNKNOWN;
@@ -187,7 +191,13 @@ class Instruction {
         this->rs2_value = IMM_EMPTY;
     }
 
-    // Parameterized Constructor.
+    /*
+        Parameterized Constructor.
+        All instruction fields (not source register values) are expected to be
+        provided an input upon initialization. 
+        Any unused fields should be provided with "empty" constants as in
+        default constructor.
+    */
     Instruction(Format format, Operation operation, int rd, int rs1, int rs2, int funct3, int funct7, int imm){
         this->format = format;
         this->operation = operation;
@@ -224,7 +234,6 @@ class Instruction {
     void printInfo(){
         Format type = getFormat();
 
-        // Optimization using switch case (though negligible).
         switch(type){
             case Format::R:  print_R_Format(); return;
             case Format::SB: print_SB_Format(); return;
