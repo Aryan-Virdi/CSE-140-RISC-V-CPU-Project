@@ -20,7 +20,7 @@ uint32_t fetch(uint32_t& PC, const std::vector<uint32_t>& instructionMemory, uin
     if (!((PC / 4) < instructionMemory.size())) return 0;
     
     uint32_t instruction = instructionMemory[PC / 4];
-    int nextPC = PC + 4;
+    uint32_t nextPC = PC + 4;
 
     PC = (branchTaken ? branchTarget : nextPC);
 
