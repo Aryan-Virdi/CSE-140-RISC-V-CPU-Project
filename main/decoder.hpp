@@ -2,6 +2,7 @@
 #define DECODER_HPP
 
 #include <iostream>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <ostream>

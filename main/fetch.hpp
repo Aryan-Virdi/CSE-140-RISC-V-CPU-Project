@@ -2,6 +2,7 @@
 #define FETCH_HPP
 
 #include <iostream>
+#include <cstdint>
 #include <vector>
 #include <stdexcept>
 
