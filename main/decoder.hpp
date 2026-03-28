@@ -371,17 +371,17 @@ Instruction decode_R(uint32_t instruction){
 }
 
 /*
-    Parameter value:    A 32-bit integer.
-    Parameter bits:     Integer amount of bits to read from.
+    Parameter rawValue:     An unsigned 32-bit integer.
+    Parameter bits:         Integer amount of bits to read from.
     
-    Returns:            A 32-bit integer where the bits of parameter "value" is read in two's complement.
+    Returns:                A 32-bit signed integer where the bits of parameter "rawValue" is read in two's complement.
 */
-int32_t twos_complement(int32_t value, int bits){
-    if (value & (1 << (bits - 1))){     // Check if the sign-bit (most-sig bit) is one.
-        value -= (1 << bits);           // If so, subtract that next power of 2.
+int32_t twos_complement(uint32_t rawValue, int bits){
+    if (rawValue & (1 << (bits - 1))){     // Check if the sign-bit (most-sig bit) is one.
+        rawValue -= (1 << bits);           // If so, subtract that next power of 2.
     }
 
-    return value;
+    return static_cast<int32_t>(rawValue);
 }
 
 /*
