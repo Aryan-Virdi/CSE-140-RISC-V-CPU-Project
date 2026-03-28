@@ -504,6 +504,12 @@ Instruction decode_UJ(uint32_t instruction){
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
 }
 
+int32_t signExtend(uint32_t bits, int originalBits){
+    uint32_t leftShifted = bits << (32 - originalBits);
+
+    return static_cast<int32_t>(leftShifted) >> (32 - originalBits); 
+}
+
 /*
     Parameter instruction:          A 32-bit unsigned integer representing machine code.
     Parameter registerFile[32]:     A read-only reference to the register file.
