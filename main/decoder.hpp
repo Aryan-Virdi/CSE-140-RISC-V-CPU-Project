@@ -302,7 +302,7 @@ std::unordered_map<uint32_t, Operation> SB_Format_Map = {
 };
 
 // Bit extraction function. [Range of bits] (inclusive) -> Range of bits starting from 0 bits (Return value).
-uint32_t extractBits(const uint32_t& instruction, int start, int end){
+uint32_t extractBits(uint32_t instruction, int start, int end){
     uint32_t rightShiftedNumber = instruction >> start; // Shifts the bits of the instruction by the amount of the starting position.
                                                         // This brings the starting position bit down to the least-most significant bit.
 
@@ -314,7 +314,7 @@ uint32_t extractBits(const uint32_t& instruction, int start, int end){
 }
 
 // Interpret format by opcode of instruction.
-Format getFormat(const uint32_t& instruction) {
+Format getFormat(uint32_t instruction) {
     uint32_t opcode = extractBits(instruction, 0, 6);
     
     switch(opcode) {
@@ -334,7 +334,7 @@ Format getFormat(const uint32_t& instruction) {
     }
 }
 
-Instruction decode_R(const uint32_t& instruction){
+Instruction decode_R(uint32_t instruction){
     // Extract bit fields for R-Type instructions.
     uint32_t opcode = extractBits(instruction, 0, 6);
     uint32_t rd = extractBits(instruction, 7, 11);
@@ -358,7 +358,7 @@ int32_t twos_complement(int32_t value, int bits){
     return value;
 }
 
-Instruction decode_SB(const uint32_t& instruction){
+Instruction decode_SB(uint32_t instruction){
 
     // Extract bit fields for SB-type.
     uint32_t opcode = extractBits(instruction, 0, 6);
@@ -400,7 +400,7 @@ Instruction decode_SB(const uint32_t& instruction){
     return Instruction(Format::SB, operation, RD_EMPTY, (int)rs1, (int)rs2, (int)funct3, FUNCT7_EMPTY, immediate);
 }
 
-Instruction decode_I(const uint32_t& instruction){
+Instruction decode_I(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
     uint32_t rd = extractBits(instruction, 7, 11);
     uint32_t funct3 = extractBits(instruction, 12, 14);
@@ -423,7 +423,7 @@ Instruction decode_I(const uint32_t& instruction){
     return Instruction(Format::I, operation, (int)rd, (int)rs1, RS2_EMPTY, (int)funct3, (int)funct7, immediate);
 }
 
-Instruction decode_S(const uint32_t& instruction){
+Instruction decode_S(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
     uint32_t funct3 = extractBits(instruction, 12, 14);
     uint32_t rs1 = extractBits(instruction, 15, 19);
@@ -442,7 +442,7 @@ Instruction decode_S(const uint32_t& instruction){
     return Instruction(Format::S,operation,RD_EMPTY,(int)rs1,(int)rs2,(int)funct3,FUNCT7_EMPTY,immediate);
 }
 
-Instruction decode_UJ(const uint32_t& instruction){
+Instruction decode_UJ(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
     Operation operation = UJ_Format_Map.at(makeFormatKey(opcode, FUNCT3_EMPTY, FUNCT7_EMPTY));
     uint32_t rd = extractBits(instruction, 7, 11);
