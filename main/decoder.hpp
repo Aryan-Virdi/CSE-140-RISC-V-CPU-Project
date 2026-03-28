@@ -90,8 +90,6 @@ const int IMM_EMPTY = -999999999;   // Very small number to show that the instru
 
 const int I_TYPE_IMM_BITS = 12;     // Amount of bits of immediate in I-type instructions.
 
-const int ERROR_CODE = -1;
-
 // Encapsulates the data of the instruction as an object.
 class Instruction {
     /* 
