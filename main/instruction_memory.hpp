@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-const int ERROR_CODE = -1;
+#include "exit_codes.h"
 
 
 /*
@@ -23,7 +23,7 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
 
     if (!programFile.is_open()) {
         std::cerr << "Error: Unable to open the file." << std::endl;
-        return ERROR_CODE;
+        return ERROR;
     }
 
     std::string binaryString;
@@ -32,7 +32,7 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
         instructionMemory.push_back(machineCode);                       // Store in instruction memory.
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 #endif

@@ -1,7 +1,11 @@
 #ifndef FETCH_HPP
 #define FETCH_HPP
 
+#include <iostream>
 #include <vector>
+#include <stdexcept>
+
+#include "exit_codes.h"
 
 /*
 
@@ -17,9 +21,13 @@
 
 */
 uint32_t fetch(uint32_t& PC, const std::vector<uint32_t>& instructionMemory, uint32_t branchTarget, bool branchTaken){
-    if (!((PC / 4) < instructionMemory.size())) return 0;
+    int memoryIndex = PC / 4;
+    if (!(memoryIndex < instructionMemory.size())){;
+        std::cerr << "Exit Code: " << ERROR << std::endl;
+        throw std::runtime_error("Segmentation Fault: Out-of-Bounds memory accessed");
+    }
     
-    uint32_t instruction = instructionMemory[PC / 4];
+    uint32_t instruction = instructionMemory[memoryIndex];
     uint32_t nextPC = PC + 4;
 
     PC = (branchTaken ? branchTarget : nextPC);

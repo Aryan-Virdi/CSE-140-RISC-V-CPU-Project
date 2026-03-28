@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "instruction_memory.hpp"
+#include "exit_codes.h"
 
 using std::string;
 using std::cout;
@@ -30,5 +31,5 @@ int main(int argc, char* argv[]) {
     string programFileName = argv[1];
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
 
-    return 0;
+    return SUCCESS;
 }
