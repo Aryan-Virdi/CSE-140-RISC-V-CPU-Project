@@ -7,6 +7,7 @@
 #include <ostream>
 
 #include "instruction.hpp"
+#include "sign_extension.hpp"
 
 // Concatenate opcode, funct3/7 into "funct7|funct3|opcode" for use as a key to a map.
 uint32_t makeFormatKey(uint32_t opcode, uint32_t funct3, uint32_t funct7) {
@@ -274,20 +275,6 @@ Instruction decode_UJ(uint32_t instruction){
     int32_t immediate = twos_complement(raw_immediate, 21); // 20 bits of immediate, but we need to account for the sign bit as well.
 
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
-}
-
-/*
-    Parameter bits:             A 32-bit unsigned integer representing an immediate value.
-    Parameter originalBits:     An integer value representing how many bits in the parameter "bits" represent the immediate value.
-    
-    Returns:                    A 32-bit signed integer that should represent the original value in parameter bits, either
-                                left zero-extended or newly one-extended.
-*/
-int32_t signExtend(uint32_t bits, int originalBits){
-    int shiftAmount = 32 - originalBits;
-    uint32_t leftShifted = bits << shiftAmount;
-
-    return ((static_cast<int32_t>(leftShifted)) >> shiftAmount);
 }
 
 /*
