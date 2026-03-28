@@ -214,6 +214,8 @@ class Instruction {
     int getFunct3(){ return this->funct3; }
     int getFunct7(){ return this->funct7; }
     int getImm(){ return this->imm; }
+    int getRs1Value(){ return this->rs1_value; }
+    int getRs2Value(){ return this->rs2_value; }
 
     // Setters.
     void setRs1Value(int value){ this->rs1_value = value; }
