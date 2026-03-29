@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "instruction_memory.hpp"
+#include "data_memory.hpp"
 #include "exit_codes.h"
 
 using std::string;
@@ -66,14 +67,13 @@ int main(int argc, char* argv[]) {
 
     // Terminal argument "--sample-init" initializes memories to sample values.
     if (argc == 3 && argv[3] == "--sample-init"){
-        instructionMemory[x1] = 0x20;
-        instructionMemory[x2] = 0x5;
-        instructionMemory[x10] = 0x70;
-        instructionMemory[x11] = 0x4;
+        rf[x1] = 0x20;
+        rf[x2] = 0x5;
+        rf[x10] = 0x70;
+        rf[x11] = 0x4;
 
-        // Not correct given current architecure. d_mem must be reworked such that this format is correct.
-        d_mem[0x70] = 0x5;
-        d_mem[0x74] = 0x10;
+        storeMemory(d_mem, 0x70, 0x5);
+        storeMemory(d_mem, 0x74, 0x10);
     }
 
     string programFileName = argv[1];
