@@ -3,11 +3,11 @@
 
 #include <cstdint>
 
-int retrieveMemory(int address, const int dataMemory[32]){
+int retrieveMemory(const int dataMemory[32], int address){
     return dataMemory[(address / 4)];
 }
 
-void storeMemory(int address, int dataMemory[32], int value){
+void storeMemory(int dataMemory[32], int address, int value){
     dataMemory[(address / 4)] = value;
 }
 
