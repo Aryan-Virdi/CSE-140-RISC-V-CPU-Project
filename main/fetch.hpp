@@ -13,7 +13,7 @@
     Parameter PC:                   Takes a reference to the global program counter. This will modify PC.
     Parameter instructionMemory:    Read-only reference to a vector, which should hold the instructions of the program.
     Parameter branchTarget:         A precomputed target address for an instruction in I-Memory.
-    Paramter branchTaken:           Boolean flag to determine whether to increment PC or switch to target address.
+    Parameter branchTaken:           Boolean flag to determine whether to increment PC or switch to target address.
 
     Returns:                        Instruction in instructionMemory held at the input PC.
 
