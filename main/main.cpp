@@ -47,6 +47,8 @@ const int x29 = 29;     const int t4 = x29;
 const int x30 = 30;     const int t5 = x30;
 const int x31 = 31;     const int t6 = x31;
 
+int total_clock_cycles = 0;
+
 // CPU's program counter
 int PC = 0;
 
