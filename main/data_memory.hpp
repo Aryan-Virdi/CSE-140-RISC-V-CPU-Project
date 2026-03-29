@@ -4,11 +4,11 @@
 #include <cstdint>
 
 int retrieveMemory(int address, const int dataMemory[32]){
-    return dataMemory[address];
+    return dataMemory[(address / 4)];
 }
 
 void storeMemory(int address, int dataMemory[32], int value){
-    dataMemory[address] = value;
+    dataMemory[(address / 4)] = value;
 }
 
 #endif
