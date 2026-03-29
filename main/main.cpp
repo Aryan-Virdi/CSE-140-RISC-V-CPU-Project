@@ -63,6 +63,10 @@ vector<uint32_t> instructionMemory;
 
 
 int main(int argc, char* argv[]) {
+    if (argc < 2){ 
+        cerr << "Input file name not provided. Program terminating." << endl;
+        return ILLEGAL_ARGUMENT;
+    }
 
     // All 32 registers initialized to zero.
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
@@ -85,6 +89,9 @@ int main(int argc, char* argv[]) {
             rf[a1] = 0x2;
             rf[a2] = 0xA;
             rf[a3] = 0xF;
+        } else {
+            cerr << "Sample case argument malformed. Program terminating." << endl;
+            return ILLEGAL_ARGUMENT;
         }
     }
 

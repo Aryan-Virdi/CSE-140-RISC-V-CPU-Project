@@ -5,5 +5,6 @@
 
 const int SUCCESS = 0;
 const int ERROR = -1;
+const int ILLEGAL_ARGUMENT = -2;
 
 #endif
