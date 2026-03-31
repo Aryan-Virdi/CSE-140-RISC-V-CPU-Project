@@ -195,8 +195,8 @@ Instruction decode_SB(uint32_t instruction){
        12 bits [0, 11]
     */
 
-    int immediate = (int)twos_complement(raw_immediate, 12);    // Reread the reconstructed immediate as a signed value in 2's complement.
-                                                                // There are twelve bits of immediate.
+    int immediate = (int)twos_complement(raw_immediate, S_SB_TYPE_IMM_BITS);    // Reread the reconstructed immediate as a signed value in 2's complement.
+                                                                                // There are twelve bits of immediate.
 
     // Build the instruction object.
     return Instruction(Format::SB, operation, RD_EMPTY, (int)rs1, (int)rs2, (int)funct3, FUNCT7_EMPTY, immediate);
@@ -225,7 +225,7 @@ Instruction decode_I(uint32_t instruction){
 
     Operation operation = I_Format_Map.at(key);
 
-    int immediate = (int)twos_complement(imm_11_to_0, 12);
+    int immediate = (int)twos_complement(imm_11_to_0, I_TYPE_IMM_BITS);
 
     return Instruction(Format::I, operation, (int)rd, (int)rs1, RS2_EMPTY, (int)funct3, (int)funct7, immediate);
 }
@@ -245,7 +245,7 @@ Instruction decode_S(uint32_t instruction){
 
     uint32_t raw_immediate = (imm_11_to_5 << 5) | imm_4_to_0;
 
-    int immediate = (int)twos_complement(raw_immediate, 12);
+    int immediate = (int)twos_complement(raw_immediate, S_SB_TYPE_IMM_BITS);
 
     uint32_t key = makeFormatKey(opcode, funct3, FUNCT7_EMPTY);
 
