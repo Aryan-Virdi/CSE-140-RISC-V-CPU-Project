@@ -61,6 +61,13 @@ int d_mem[32];
 // Computer's instruction memory
 vector<uint32_t> instructionMemory;
 
+// Control signals
+int RegRead = 0;
+int RegWrite = 0;
+int MemRead = 0;
+int MemWrite = 0;
+int branch = 0;
+
 
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
