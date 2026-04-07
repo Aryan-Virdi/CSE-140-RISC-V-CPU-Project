@@ -5,13 +5,13 @@
 class IControl{
     int *ctrlArray[6];
 
-    const enum ControlIndex {
-        regWrIdx = 1,
-        branchIdx = 2,
-        ALUSrcIdx = 3,
-        memWrIdx = 4,
-        memToRegIdx = 5,
-        memRdIdx = 6
+    enum ControlIndex {
+        regWrIdx = 0,
+        branchIdx = 1,
+        ALUSrcIdx = 2,
+        memWrIdx = 3,
+        memToRegIdx = 4,
+        memRdIdx = 5
     };
 
     public:
