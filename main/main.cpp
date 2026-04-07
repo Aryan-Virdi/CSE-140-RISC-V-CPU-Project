@@ -6,6 +6,7 @@
 #include "instruction_memory.hpp"
 #include "data_memory.hpp"
 #include "exit_codes.h"
+#include "control_unit.hpp"
 
 using std::string;
 using std::cout;
@@ -62,12 +63,14 @@ int d_mem[32];
 vector<uint32_t> instructionMemory;
 
 // Control signals
-int RegRead = 0;
-int RegWrite = 0;
-int MemRead = 0;
-int MemWrite = 0;
+int regWrite = 0;
 int branch = 0;
+int ALUSrc = 0;
+int memWrite = 0;
+int memToReg = 0;
+int memRead = 0;
 
+IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead);
 
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
