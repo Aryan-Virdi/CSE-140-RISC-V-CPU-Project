@@ -31,6 +31,13 @@ class IControl{
     void updateMemToReg(int value){ *ctrlArray[ControlIndex::memToRegIdx] = value; }
     void updateMemRd(int value)   { *ctrlArray[ControlIndex::memRdIdx] = value;    }
 
+    int getRegWr()    const { return *ctrlArray[ControlIndex::regWrIdx];    }
+    int getBranch()   const { return *ctrlArray[ControlIndex::branchIdx];   }
+    int getALUSrc()   const { return *ctrlArray[ControlIndex::ALUSrcIdx];   }
+    int getMemWr()    const { return *ctrlArray[ControlIndex::memWrIdx];    }
+    int getMemToReg() const { return *ctrlArray[ControlIndex::memToRegIdx]; }
+    int getMemRd()    const { return *ctrlArray[ControlIndex::memRdIdx];    }
+
 };
 
 #endif
