@@ -1,6 +1,8 @@
 #ifndef CONTROL_UNIT_HPP
 #define CONTROL_UNIT_HPP
 
+#include <cstdint>
+
 // Provides an interface for the control signals.
 class IControl{
     int *ctrlArray[6];
@@ -39,5 +41,18 @@ class IControl{
     int getMemRd()    const { return *ctrlArray[ControlIndex::memRdIdx];    }
 
 };
+
+/*
+    Parameter opcode:       An unsigned integer of 32 bits that represents the opcode of an instruction.
+    Parameter ctrlSignals:  An IControl interface that packs the addresses to global control signals
+                            into one object.
+
+    Note:                   Parameter ctrlSignals is expected to be instantiated in main.cpp and passed into
+                            decoder.hpp.
+*/
+void controlUnit(uint32_t opcode, IControl ctrlSignals){
+    // Needs to generate ctrl signals using opcode. May have to add funct fields as params.
+    
+}
 
 #endif
