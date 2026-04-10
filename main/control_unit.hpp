@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include "instruction.hpp"
+
 // Provides an interface for the control signals.
 class IControl{
     int *ctrlArray[6];
@@ -13,17 +15,20 @@ class IControl{
         ALUSrcIdx = 2,
         memWrIdx = 3,
         memToRegIdx = 4,
-        memRdIdx = 5
+        memRdIdx = 5/*,
+        ALYOpIdx = 6
+        */
     };
 
     public:
-    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd){
+    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd /*, int* ALUOp*/){
         ctrlArray[ControlIndex::regWrIdx]     = regWr;
         ctrlArray[ControlIndex::branchIdx]    = branch;
         ctrlArray[ControlIndex::ALUSrcIdx]    = ALUSrc;
         ctrlArray[ControlIndex::memWrIdx]     = memWr;
         ctrlArray[ControlIndex::memToRegIdx]  = memToReg;
         ctrlArray[ControlIndex::memRdIdx]     = memRd;
+        // ctrlArray[ControlIndex::ALUOpIdx]     = aluOP;
     }
 
     void updateRegWr(int value)   { *ctrlArray[ControlIndex::regWrIdx] = value;    }
@@ -32,6 +37,7 @@ class IControl{
     void updateMemWr(int value)   { *ctrlArray[ControlIndex::memWrIdx] = value;    }
     void updateMemToReg(int value){ *ctrlArray[ControlIndex::memToRegIdx] = value; }
     void updateMemRd(int value)   { *ctrlArray[ControlIndex::memRdIdx] = value;    }
+    // void updateALUOp(int value)   { *ctrlArray[ControlIndex::ALUOpIdx] = value;    }
 
     int getRegWr()    const { return *ctrlArray[ControlIndex::regWrIdx];    }
     int getBranch()   const { return *ctrlArray[ControlIndex::branchIdx];   }
@@ -39,6 +45,7 @@ class IControl{
     int getMemWr()    const { return *ctrlArray[ControlIndex::memWrIdx];    }
     int getMemToReg() const { return *ctrlArray[ControlIndex::memToRegIdx]; }
     int getMemRd()    const { return *ctrlArray[ControlIndex::memRdIdx];    }
+    // int getALUOp()    const { return *ctrlArray[ControlIndex::ALUOpIdx];    }
 
 };
 
@@ -50,9 +57,9 @@ class IControl{
     Note:                   Parameter ctrlSignals is expected to be instantiated in main.cpp and passed into
                             decoder.hpp.
 */
-void controlUnit(uint32_t opcode, IControl ctrlSignals){
-    // Needs to generate ctrl signals using opcode. May have to add funct fields as params.
-    
+void controlUnit(Instruction &instruction, IControl &ctrlSignals){
+    // Needs to generate ctrl signals using opcode
+  
 }
 
 #endif
