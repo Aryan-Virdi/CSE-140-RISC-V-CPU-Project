@@ -39,14 +39,14 @@ class IControl{
     void updateMemRd(int value)   { *ctrlArray[ControlIndex::memRdIdx] = value;    }
     void updateALUOp(int value)   { *ctrlArray[ControlIndex::ALUOpIdx] = value;    }
 
-    void updateAllSignals(int regWr, int branch, int ALUSrc, int memWr, int memToReg, int memRd, int ALUOp){
+    void updateAllSignals(int regWr, int branch, int ALUSrc, int ALUOp, int memWr, int memToReg, int memRd){
         updateRegWr(regWr);
         updateBranch(branch);
         updateALUSrc(ALUSrc);
+        updateALUOp(ALUOp);
         updateMemWr(memWr);
         updateMemToReg(memToReg);
         updateMemRd(memRd);
-        updateALUOp(ALUOp);
     }
 
     int getRegWr()    const { return *ctrlArray[ControlIndex::regWrIdx];    }
@@ -60,7 +60,7 @@ class IControl{
 };
 
 int aluControl(uint32_t funct3, uint32_t funct7){
-    int opValue = 0;
+    int opValue = 0;    // Placeholder body
     return opValue;
 }
 
@@ -75,11 +75,25 @@ int aluControl(uint32_t funct3, uint32_t funct7){
 void controlUnit(uint32_t opcode, uint32_t funct3, uint32_t funct7, IControl& ctrlSignals){
     switch(opcode){
         case 0b0110011: // R-Type
-            ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
+            ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, 0b10, FALSE, FALSE, FALSE);
             break;
-        case 0b0010011: // Generic I-type
-            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
+        // case 0b0010011: // Generic I-type
+        //     ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
+        //     break;
+        case 0b0000011: // lw instruction
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, TRUE, TRUE);
             break;
+        case 0b1100011: // SB-type
+            ctrlSignals.updateRegWr(FALSE);
+            ctrlSignals.updateBranch(TRUE);
+            ctrlSignals.updateALUSrc(FALSE);
+            ctrlSignals.updateALUOp(0b01);
+            ctrlSignals.updateMemWr(FALSE);
+            // "Don't care about memToReg"
+            ctrlSignals.updateMemRd(FALSE);
+            break;
+        case 0b0100011: // S-Type (sw)
+            ctrlSignals.updateAllSignals(FALSE, FALSE, TRUE, 0b00, TRUE, FALSE, FALSE);
     }
 
   
