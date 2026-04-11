@@ -69,8 +69,9 @@ int ALUSrc = 0;
 int memWrite = 0;
 int memToReg = 0;
 int memRead = 0;
+int ALUOp = 0;
 
-IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead);
+IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead, &ALUOp);
 
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
