@@ -3,7 +3,8 @@
 
 #include <cstdint>
 
-#include "instruction.hpp"
+const int TRUE = 1;
+const int FALSE = 1;
 
 // Provides an interface for the control signals.
 class IControl{
@@ -15,20 +16,19 @@ class IControl{
         ALUSrcIdx = 2,
         memWrIdx = 3,
         memToRegIdx = 4,
-        memRdIdx = 5/*,
-        ALYOpIdx = 6
-        */
+        memRdIdx = 5,
+        ALUOpIdx = 6
     };
 
     public:
-    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd /*, int* ALUOp*/){
+    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd, int* ALUOp){
         ctrlArray[ControlIndex::regWrIdx]     = regWr;
         ctrlArray[ControlIndex::branchIdx]    = branch;
         ctrlArray[ControlIndex::ALUSrcIdx]    = ALUSrc;
         ctrlArray[ControlIndex::memWrIdx]     = memWr;
         ctrlArray[ControlIndex::memToRegIdx]  = memToReg;
         ctrlArray[ControlIndex::memRdIdx]     = memRd;
-        // ctrlArray[ControlIndex::ALUOpIdx]     = aluOP;
+        ctrlArray[ControlIndex::ALUOpIdx]     = ALUOp;
     }
 
     void updateRegWr(int value)   { *ctrlArray[ControlIndex::regWrIdx] = value;    }
@@ -37,7 +37,17 @@ class IControl{
     void updateMemWr(int value)   { *ctrlArray[ControlIndex::memWrIdx] = value;    }
     void updateMemToReg(int value){ *ctrlArray[ControlIndex::memToRegIdx] = value; }
     void updateMemRd(int value)   { *ctrlArray[ControlIndex::memRdIdx] = value;    }
-    // void updateALUOp(int value)   { *ctrlArray[ControlIndex::ALUOpIdx] = value;    }
+    void updateALUOp(int value)   { *ctrlArray[ControlIndex::ALUOpIdx] = value;    }
+
+    void updateAllSignals(int regWr, int branch, int ALUSrc, int memWr, int memToReg, int memRd, int ALUOp){
+        updateRegWr(regWr);
+        updateBranch(branch);
+        updateALUSrc(ALUSrc);
+        updateMemWr(memWr);
+        updateMemToReg(memToReg);
+        updateMemRd(memRd);
+        updateALUOp(ALUOp);
+    }
 
     int getRegWr()    const { return *ctrlArray[ControlIndex::regWrIdx];    }
     int getBranch()   const { return *ctrlArray[ControlIndex::branchIdx];   }
@@ -45,20 +55,33 @@ class IControl{
     int getMemWr()    const { return *ctrlArray[ControlIndex::memWrIdx];    }
     int getMemToReg() const { return *ctrlArray[ControlIndex::memToRegIdx]; }
     int getMemRd()    const { return *ctrlArray[ControlIndex::memRdIdx];    }
-    // int getALUOp()    const { return *ctrlArray[ControlIndex::ALUOpIdx];    }
+    int getALUOp()    const { return *ctrlArray[ControlIndex::ALUOpIdx];    }
 
 };
 
+int aluControl(uint32_t funct3, uint32_t funct7){
+    int opValue = 0;
+    return opValue;
+}
+
 /*
-    Parameter opcode:       An unsigned integer of 32 bits that represents the opcode of an instruction.
+    Parameter instruction:  An instruction object. This object is expected to be populated.
     Parameter ctrlSignals:  An IControl interface that packs the addresses to global control signals
                             into one object.
 
     Note:                   Parameter ctrlSignals is expected to be instantiated in main.cpp and passed into
                             decoder.hpp.
 */
-void controlUnit(Instruction &instruction, IControl &ctrlSignals){
-    // Needs to generate ctrl signals using opcode
+void controlUnit(uint32_t opcode, uint32_t funct3, uint32_t funct7, IControl& ctrlSignals){
+    switch(opcode){
+        case 0b0110011: // R-Type
+            ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
+            break;
+        case 0b0010011: // Generic I-type
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
+            break;
+    }
+
   
 }
 
