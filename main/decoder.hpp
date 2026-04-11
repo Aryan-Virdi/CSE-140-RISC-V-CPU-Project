@@ -9,6 +9,7 @@
 
 #include "instruction.hpp"
 #include "sign_extension.hpp"
+#include "control_unit.hpp"
 
 // Concatenate opcode, funct3/7 into "funct7|funct3|opcode" for use as a key to a map.
 uint32_t makeFormatKey(uint32_t opcode, uint32_t funct3, uint32_t funct7) {
@@ -280,11 +281,12 @@ Instruction decode_UJ(uint32_t instruction){
 
 /*
     Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter ctrlSignals:          A reference to an IControl interface.
     Parameter registerFile[32]:     A read-only reference to the register file.
     
     Returns:                        An instruction object including its format type, fields, and their values.
 */
-Instruction decode(uint32_t instruction, const int registerFile[32]) {
+Instruction decode(uint32_t instruction, IControl& ctrlSignals, const int registerFile[32]) {
     Instruction decodedInstruction = Instruction();
 
     Format type = getFormat(instruction);   // Get instruction format.
