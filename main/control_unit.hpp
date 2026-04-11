@@ -59,7 +59,7 @@ class IControl{
 
 };
 
-int aluControl(uint32_t funct3, uint32_t funct7){
+int aluControl(int ALUOp, uint32_t funct3, uint32_t funct7){
     int opValue = 0;    // Placeholder body
     return opValue;
 }
