@@ -4,43 +4,46 @@
 #include <vector>
 #include <iostream>
 
-enum class memType{
-    registerFile, dataMemory
+enum class locationType{
+    registerFile, dataMemory, programCounter
 };
 
-struct MemoryFile{
-    memType memoryType;
+struct OnChipLocation{
+    locationType location;
     int idx;
     int value;
 
     bool isRegFile(){
-        return (this->memoryType == memType::registerFile);
+        return (this->location == locationType::registerFile);
     }
 
     bool isDataMem(){
-        return (this->memoryType == memType::dataMemory);
+        return (this->location == locationType::dataMemory);
+    }
+
+    bool isProgramCounter(){
+        return (this->location == locationType::programCounter);
     }
 };
 
 class PrintEvent{
-    std::vector<MemoryFile> modificationQueue;
+    std::vector<OnChipLocation> modificationQueue;
 
     void printModification(int index){
-        MemoryFile location = modificationQueue[index];
-        if (location.isRegFile()){
-            std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl;
-        }
+        OnChipLocation location = modificationQueue[index];
+        
+        if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; }
 
-        if (location.isDataMem()){
-            std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl;
-        }
+        if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; }
+
+        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value; }
     }
 
     void clearBuffer(){ modificationQueue.clear(); }
 
     public:
-    void addPrintEvent(memType memoryType, int idx, int value){
-        MemoryFile location = {memoryType, idx, value};
+    void addPrintEvent(locationType memoryType, int idx, int value){
+        OnChipLocation location = {memoryType, idx, value};
         modificationQueue.push_back(location);
     }
 
