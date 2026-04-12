@@ -7,6 +7,7 @@ const int TRUE = 1;
 const int FALSE = 0;
 
 // Provides an interface for the control signals.
+// Will have to update to handle additional signal(s) for jal and jalr in the future.
 class IControl{
     int *ctrlArray[7];
 
@@ -59,39 +60,53 @@ class IControl{
 
 };
 
-int aluControl(int ALUOp, uint32_t funct3, uint32_t funct7){
-    int opValue = 0;    // Placeholder body
-    return opValue;
-}
-
 /*
+    Parameter opcdoe:       An unsigned 32-bit integer representing an Instruction's opcode in the lower bits.
+    Parameter ctrlSignals:  A reference to an IControl object, expectedly in main.cpp.
 
+    Note:                   ALUOp is updated as shown in the lecture slides and ZyBooks sections except in one
+                            aspect. Here, it is assumed that general immediate type instructions have an
+                            ALUOp of 0b11, or 3 in decimal.
 */
-void controlUnit(uint32_t opcode, uint32_t funct3, uint32_t funct7, IControl& ctrlSignals){
+void controlUnit(uint32_t opcode, IControl& ctrlSignals){
     switch(opcode){
-        case 0b0110011: // R-Type
+        case 0b0110011: 
+            // R-Type
             ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, 0b10, FALSE, FALSE, FALSE);
             break;
-        // case 0b0010011: // Generic I-type
-        //     ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, aluControl(funct3, funct7), FALSE, FALSE, FALSE);
-        //     break;
-        case 0b0000011: // lw instruction
+        case 0b0010011: 
+            // Generic I-type
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b11, FALSE, FALSE, FALSE);
+            break;
+        case 0b0000011: 
+            // lw instruction
             ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, TRUE, TRUE);
             break;
-        case 0b1100011: // SB-type
+        // case 0b1100111:
+            // jalr instruction
+            // break;
+        case 0b1100011: 
+            // SB-type
             ctrlSignals.updateRegWr(FALSE);
             ctrlSignals.updateBranch(TRUE);
             ctrlSignals.updateALUSrc(FALSE);
             ctrlSignals.updateALUOp(0b01);
             ctrlSignals.updateMemWr(FALSE);
-            // "Don't care about memToReg"
+            // "Don't care about memToReg; ignore.
             ctrlSignals.updateMemRd(FALSE);
             break;
-        case 0b0100011: // S-Type (sw)
+        case 0b0100011: 
+            // S-Type (sw)
             ctrlSignals.updateAllSignals(FALSE, FALSE, TRUE, 0b00, TRUE, FALSE, FALSE);
+            break;
     }
 
   
+}
+
+int aluControl(int ALUOp, uint32_t funct3, uint32_t funct7){
+    int opValue = 0;    // Placeholder body
+    return opValue;
 }
 
 #endif
