@@ -4,13 +4,15 @@
 #include <vector>
 #include <iostream>
 
+const int EMPTY_IDX = -1;    // Used as index parameter for program counter events.
+
 // Enumerates types of locations that can broadcast their changes.
 enum class locationType{
     registerFile, dataMemory, programCounter
 };
 
 // Convenience wrapper to store such modification events.
-struct OnChipLocation{
+struct valueLocation{
     locationType location;
     int idx;
     int value;
@@ -30,10 +32,10 @@ struct OnChipLocation{
 
 // Actual interface for adding and executing printable events.
 class PrintEvent{
-    std::vector<OnChipLocation> modificationQueue;
+    std::vector<valueLocation> modificationQueue;
 
     void printModification(int index){
-        OnChipLocation location = modificationQueue[index];
+        valueLocation location = modificationQueue[index];
 
         if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; }
 
@@ -46,7 +48,7 @@ class PrintEvent{
 
     public:
     void addPrintEvent(locationType memoryType, int idx, int value){
-        OnChipLocation location = {memoryType, idx, value};
+        valueLocation location = {memoryType, idx, value};
         modificationQueue.push_back(location);
     }
 
