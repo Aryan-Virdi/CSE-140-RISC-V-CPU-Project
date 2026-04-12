@@ -4,10 +4,12 @@
 #include <vector>
 #include <iostream>
 
+// Enumerates types of locations that can broadcast their changes.
 enum class locationType{
     registerFile, dataMemory, programCounter
 };
 
+// Convenience wrapper to store such modification events.
 struct OnChipLocation{
     locationType location;
     int idx;
@@ -26,12 +28,13 @@ struct OnChipLocation{
     }
 };
 
+// Actual interface for adding and executing printable events.
 class PrintEvent{
     std::vector<OnChipLocation> modificationQueue;
 
     void printModification(int index){
         OnChipLocation location = modificationQueue[index];
-        
+
         if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; }
 
         if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; }
