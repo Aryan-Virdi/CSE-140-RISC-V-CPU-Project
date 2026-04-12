@@ -41,7 +41,7 @@ class PrintEvent{
 
         if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; }
 
-        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value; }
+        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value << std::endl; }
     }
 
     void clearBuffer(){ modificationQueue.clear(); }
