@@ -73,6 +73,9 @@ int ALUOp = 0;
 
 IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead, &ALUOp);
 
+int alu_zero = 0;
+int branch_target = 0;
+
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
         cerr << "Input file name not provided. Program terminating." << endl;
