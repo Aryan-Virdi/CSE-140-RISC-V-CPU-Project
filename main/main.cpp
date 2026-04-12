@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
 
     while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch));
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
