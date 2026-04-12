@@ -10,7 +10,7 @@ const int UNKNOWN = -1;
 // Provides an interface for the control signals.
 // Will have to update to handle additional signal(s) for jal and jalr in the future.
 class IControl{
-    int *ctrlArray[7];
+    int* ctrlArray[7];
 
     enum ControlIndex : int {
         regWrIdx = 0,
