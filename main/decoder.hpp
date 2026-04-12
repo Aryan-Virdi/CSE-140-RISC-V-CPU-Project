@@ -97,13 +97,11 @@ uint32_t extractBits(uint32_t instruction, int start, int end){
 }
 
 /*
-    Parameter instruction:  A 32-bit unsigned integer representing machine code.
+    Parameter opcode:  A 32-bit unsigned integer representing the instruction's opcode.
     
-    Returns:                An enumerated value representing the machine code's format.
+    Returns:           An enumerated value representing the instruction's format.
 */
-Format getFormat(uint32_t instruction) {
-    uint32_t opcode = extractBits(instruction, 0, 6);
-    
+Format getFormat(uint32_t opcode) {
     switch(opcode) {
         case 0b0110011: return Format::R;
 
@@ -279,15 +277,17 @@ Instruction decode_UJ(uint32_t instruction){
 
 /*
     Parameter instruction:          A 32-bit unsigned integer representing machine code.
-    Parameter ctrlSignals:          A reference to an IControl interface.
+    Parameter ctrlSignals:          A reference to an IControl interface object.
     Parameter registerFile[32]:     A read-only reference to the register file.
     
     Returns:                        An instruction object including its format type, fields, and their values.
 */
 Instruction decode(uint32_t instruction, IControl& ctrlSignals, const int registerFile[32]) {
     Instruction decodedInstruction = Instruction();
+    uint32_t opcode = extractBits(instruction, 0, 6);   // Read first seven bits of machine code.
 
-    Format type = getFormat(instruction);   // Get instruction format.
+    controlUnit(opcode, ctrlSignals);   // Generate control signals.
+    Format type = getFormat(opcode);    // Get instruction format.
 
     switch(type){
         case Format::R:
