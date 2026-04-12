@@ -5,6 +5,7 @@
 
 const int TRUE = 1;
 const int FALSE = 0;
+const int UNKNOWN = -1;
 
 // Provides an interface for the control signals.
 // Will have to update to handle additional signal(s) for jal and jalr in the future.
@@ -61,12 +62,10 @@ class IControl{
 };
 
 /*
-    Parameter opcdoe:       An unsigned 32-bit integer representing an Instruction's opcode in the lower bits.
+    Parameter opcode:       An unsigned 32-bit integer representing an Instruction's opcode in the lower bits.
     Parameter ctrlSignals:  A reference to an IControl object, expectedly in main.cpp.
 
-    Note:                   ALUOp is updated as shown in the lecture slides and ZyBooks sections except in one
-                            aspect. Here, it is assumed that general immediate type instructions have an
-                            ALUOp of 0b11, or 3 in decimal.
+    Note:                   ALUOp is updated as shown in the lecture slides and ZyBooks
 */
 void controlUnit(uint32_t opcode, IControl& ctrlSignals){
     switch(opcode){
@@ -76,7 +75,7 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
             break;
         case 0b0010011: 
             // Generic I-type
-            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b11, FALSE, FALSE, FALSE);
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b10, FALSE, FALSE, FALSE);
             break;
         case 0b0000011: 
             // lw instruction
@@ -104,9 +103,45 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
   
 }
 
-int aluControl(int ALUOp, uint32_t funct3, uint32_t funct7){
-    int opValue = 0;    // Placeholder body
-    return opValue;
+/*
+    Parameter ALUOp:    An integer representing the generated ALU control signal.
+                        Expected to be provided from global value (main.cpp)
+    Parameter funct3:   An integer representing the funct3 field.
+    Parameter funct7:   An integer representing the funct7 field.
+
+    Note:               funct3/7 fields are treated as unsigned 32-bit integers
+                        elsewhere, until they are stored in an Instruction object's
+                        fields. This type "promotion" is reflected in these parameters.
+
+    Note:               This logic flow depends on the Instruction object providing
+                        an "empty" funct7 field for I-type instructions.
+*/
+int aluControl(int ALUOp, int funct3, int funct7){
+    switch(ALUOp){
+        case 0b00: return 0b0010;   // Add (lw/sw)
+        case 0b01: return 0b0110;   // Subtract (beq)
+        case 0b10:
+            switch(funct3){
+                case 0b000:
+                    switch(funct7){
+                        case 0b0000000: return 0b0010;  // Add
+                        case 0b0100000: return 0b0110;  // Subtract
+                        default: return UNKNOWN;
+                    }
+                case 0b110:
+                    switch(funct7){
+                        case 0b0000000: return 0b0001;  // Logical OR
+                        default: return UNKNOWN;
+                    }
+                case 0b111:
+                    switch(funct7){
+                        case 0b0000000: return 0b0000;  // Logical AND
+                        default: return UNKNOWN;
+                    }
+                default: return UNKNOWN;
+            }
+        default: return UNKNOWN;
+    }
 }
 
 #endif
