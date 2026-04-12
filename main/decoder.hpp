@@ -83,7 +83,7 @@ std::unordered_map<uint32_t, Operation> SB_Format_Map = {
     
     Returns:                    An unsigned 32-bit integer with lower bits of range [start, end]
 
-    Description: Bit extraction function. [Range of bits] (inclusive) -> Range of bits starting from 0 bits (Return value).
+    Description:                Bit extraction function. [Range of bits] (inclusive) -> Range of bits starting from 0 bits (Return value).
 */
 uint32_t extractBits(uint32_t instruction, int start, int end){
     uint32_t rightShiftedNumber = instruction >> start; // Shifts the bits of the instruction by the amount of the starting position.
@@ -97,9 +97,9 @@ uint32_t extractBits(uint32_t instruction, int start, int end){
 }
 
 /*
-    Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter instruction:  A 32-bit unsigned integer representing machine code.
     
-    Returns:                       An enumerated value representing the machine code's format.
+    Returns:                An enumerated value representing the machine code's format.
 */
 Format getFormat(uint32_t instruction) {
     uint32_t opcode = extractBits(instruction, 0, 6);
@@ -122,9 +122,9 @@ Format getFormat(uint32_t instruction) {
 }
 
 /*
-    Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter instruction:  A 32-bit unsigned integer representing machine code.
     
-    Returns:                        An instruction object of R format, and its fields.
+    Returns:                An instruction object of R format, and its fields.
 */
 Instruction decode_R(uint32_t instruction){
     // Extract bit fields for R-Type instructions.
@@ -157,9 +157,9 @@ int32_t twos_complement(uint32_t rawValue, int bits){
 }
 
 /*
-    Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter instruction:      A 32-bit unsigned integer representing machine code.
     
-    Returns:                        An instruction object of SB format, and its fields.
+    Returns:                    An instruction object of SB format, and its fields.
 */
 Instruction decode_SB(uint32_t instruction){
 
@@ -204,9 +204,9 @@ Instruction decode_SB(uint32_t instruction){
 }
 
 /*
-    Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter instruction:  A 32-bit unsigned integer representing machine code.
     
-    Returns:                        An instruction object of I format, and its fields.
+    Returns:                An instruction object of I format, and its fields.
 */
 Instruction decode_I(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
@@ -232,9 +232,9 @@ Instruction decode_I(uint32_t instruction){
 }
 
 /*
-    Parameter instruction:          A 32-bit integer unsigned representing machine code.
+    Parameter instruction:  A 32-bit integer unsigned representing machine code.
     
-    Returns:                        An instruction object of S format, and its fields.
+    Returns:                An instruction object of S format, and its fields.
 */
 Instruction decode_S(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
@@ -256,16 +256,14 @@ Instruction decode_S(uint32_t instruction){
 }
 
 /*
-    Parameter instruction:          A 32-bit unsigned integer representing machine code.
+    Parameter instruction:  A 32-bit unsigned integer representing machine code.
     
-    Returns:                        An instruction object of UJ format, and its fields.
+    Returns:                An instruction object of UJ format, and its fields.
 */
 Instruction decode_UJ(uint32_t instruction){
     uint32_t opcode = extractBits(instruction, 0, 6);
     Operation operation = UJ_Format_Map.at(makeFormatKey(opcode, FUNCT3_EMPTY, FUNCT7_EMPTY));
     uint32_t rd = extractBits(instruction, 7, 11);
-
-    // uint32_t imm_20_and_10_to_1_and_11_and_19_to_12 = extractBits(instruction, 12, 31); // 20 bits.
 
     uint32_t twentiethBit = extractBits(instruction, 31, 31);
     uint32_t imm_10_to_1bit = extractBits(instruction, 21, 30);
