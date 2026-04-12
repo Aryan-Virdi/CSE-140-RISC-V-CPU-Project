@@ -23,10 +23,10 @@ struct MemoryFile{
 };
 
 class PrintEvent{
-    std::vector<MemoryFile> modifiedMemory;
+    std::vector<MemoryFile> modificationQueue;
 
     void printModification(int index){
-        MemoryFile location = modifiedMemory[index];
+        MemoryFile location = modificationQueue[index];
         if (location.isRegFile()){
             std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl;
         }
@@ -36,16 +36,16 @@ class PrintEvent{
         }
     }
 
-    void clearBuffer(){ modifiedMemory.clear(); }
+    void clearBuffer(){ modificationQueue.clear(); }
 
     public:
     void addPrintEvent(memType memoryType, int idx, int value){
         MemoryFile location = {memoryType, idx, value};
-        modifiedMemory.push_back(location);
+        modificationQueue.push_back(location);
     }
 
     void printModifications(){
-        for (int idx = 0; idx << modifiedMemory.size(); idx++){ printModification(idx); }
+        for (int idx = 0; idx << modificationQueue.size(); idx++){ printModification(idx); }
         clearBuffer();
     }
 };
