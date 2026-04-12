@@ -101,7 +101,11 @@ int main(int argc, char* argv[]) {
         // writeBack();
 
         total_clock_cycles++;
+        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        printQueue.printModifications();    // Print this cycle's modifications.
     }
+
+    cout << endl << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
 
     return SUCCESS;
 }
