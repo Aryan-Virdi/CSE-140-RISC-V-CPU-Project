@@ -19,7 +19,7 @@
     Note:                           Assumes that (PC / 4) is only ever an integer. I.e., PC is either 0 or some 
                                     multiple of 4
 */
-uint32_t fetch(uint32_t& PC, const std::vector<uint32_t>& instructionMemory, uint32_t branchTarget, bool branchTaken){
+uint32_t fetch(int& PC, const std::vector<uint32_t>& instructionMemory, uint32_t branchTarget, bool branchTaken){
     int memoryIndex = PC / 4;
     if (!(memoryIndex < instructionMemory.size())){;
         std::cerr << "Exit Code: " << ERROR << std::endl;
