@@ -92,7 +92,12 @@ int main(int argc, char* argv[]) {
         int aluResult /* = execute(); */;
 
         int data = mem(d_mem, aluResult, instruction.getRs2(), static_cast<bool>(memWrite));    // Returns an actual d_mem value if memWrite is true.
+                                                                                                // The value in this function call is the second source register because
+                                                                                                // memory should only be written into by store-word, which provides the data in RS2.
+
         int writeDataSource = (static_cast<bool>(memToReg)) ? data : aluResult;                 // data to be written back is from "data" if memToReg is true. Directly from the ALU otherwise.
+                                                                                                // The data/writeDataSource logic holds as long as memWr is only ever true for "sw," as well as
+                                                                                                // memToReg is always false for "sw."
         // writeBack();
 
         total_clock_cycles++;
