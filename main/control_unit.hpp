@@ -109,6 +109,9 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
     Parameter funct3:   An integer representing the funct3 field.
     Parameter funct7:   An integer representing the funct7 field.
 
+    Returns:            An integer value representing the control signals for the
+                        ALU.
+
     Note:               funct3/7 fields are treated as unsigned 32-bit integers
                         elsewhere, until they are stored in an Instruction object's
                         fields. This type "promotion" is reflected in these parameters.
