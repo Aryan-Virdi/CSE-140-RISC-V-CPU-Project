@@ -46,6 +46,8 @@ IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memT
 int alu_zero = 0;
 int branch_target = 0;
 
+PrintEvent printQueue = PrintEvent();
+
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
         cerr << "Input file name not provided. Program terminating." << endl;
