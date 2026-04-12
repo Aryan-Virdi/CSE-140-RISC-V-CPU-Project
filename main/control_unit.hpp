@@ -8,7 +8,7 @@ const int FALSE = 1; //<-- this doesn't seem right
 
 // Provides an interface for the control signals.
 class IControl{
-    int *ctrlArray[6];
+    int *ctrlArray[6]; // check this, I think it needs to be 7 to hold 0 through 6
 
     enum ControlIndex {
         regWrIdx = 0,
