@@ -4,7 +4,7 @@
 #include <cstdint>
 
 const int TRUE = 1;
-const int FALSE = 1;
+const int FALSE = 1; //<-- this doesn't seem right
 
 // Provides an interface for the control signals.
 class IControl{
