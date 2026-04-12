@@ -4,11 +4,11 @@
 #include <cstdint>
 
 const int TRUE = 1;
-const int FALSE = 1; //<-- this doesn't seem right
+const int FALSE = 0;
 
 // Provides an interface for the control signals.
 class IControl{
-    int *ctrlArray[6]; // check this, I think it needs to be 7 to hold 0 through 6
+    int *ctrlArray[7];
 
     enum ControlIndex {
         regWrIdx = 0,
