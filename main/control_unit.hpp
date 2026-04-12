@@ -10,7 +10,7 @@ const int FALSE = 0;
 class IControl{
     int *ctrlArray[7];
 
-    enum ControlIndex {
+    enum ControlIndex : int {
         regWrIdx = 0,
         branchIdx = 1,
         ALUSrcIdx = 2,
