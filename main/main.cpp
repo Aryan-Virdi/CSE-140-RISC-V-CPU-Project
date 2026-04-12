@@ -7,6 +7,9 @@
 #include "data_memory.hpp"
 #include "exit_codes.h"
 #include "control_unit.hpp"
+#include "fetch.hpp"
+#include "instruction.hpp"
+#include "decoder.hpp"
 
 using std::string;
 using std::cout;
@@ -111,6 +114,20 @@ int main(int argc, char* argv[]) {
 
     string programFileName = argv[1];
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
+
+    while ((PC/4) < instructionMemory.size()){
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch));
+        Instruction instruction = decode(currInstruction, controlSignals, rf);
+
+        int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
+        int aluResult /* = execute(); */;
+
+        int data = mem(d_mem, aluResult, instruction.getRs2(), static_cast<bool>(memWrite));    // Returns an actual d_mem value if memWrite is true.
+        int writeDataSource = (static_cast<bool>(memToReg)) ? data : aluResult;                 // data to be written back is from "data" if memToReg is true. Directly from the ALU otherwise.
+        // writeBack();
+
+        total_clock_cycles++;
+    }
 
     return SUCCESS;
 }
