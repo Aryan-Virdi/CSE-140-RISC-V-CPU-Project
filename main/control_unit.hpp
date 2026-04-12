@@ -65,12 +65,7 @@ int aluControl(int ALUOp, uint32_t funct3, uint32_t funct7){
 }
 
 /*
-    Parameter instruction:  An instruction object. This object is expected to be populated.
-    Parameter ctrlSignals:  An IControl interface that packs the addresses to global control signals
-                            into one object.
 
-    Note:                   Parameter ctrlSignals is expected to be instantiated in main.cpp and passed into
-                            decoder.hpp.
 */
 void controlUnit(uint32_t opcode, uint32_t funct3, uint32_t funct7, IControl& ctrlSignals){
     switch(opcode){
