@@ -46,11 +46,20 @@ class PrintEvent{
                             every element.
     */
     void printModification(ValueLocation location){
-        if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; return; }
+        if (location.isRegFile()){ 
+            std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; 
+            return; 
+        }
 
-        if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; return; }
+        if (location.isDataMem()){ 
+            std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; 
+            return; 
+        }
 
-        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value << std::endl; return; }
+        if (location.isProgramCounter()){ 
+            std::cout << "pc is modified to " << std::hex << location.value << std::endl; 
+            return; 
+        }
     }
 
     /*
