@@ -23,6 +23,7 @@ struct valueLocation{
     int idx;
     int value;
 
+    // Boolean helpers to determine which of the units broadcasted the change.
     bool isRegFile(){
         return (this->location == LocationType::registerFile);
     }
@@ -40,31 +41,57 @@ struct valueLocation{
 class PrintEvent{
     std::vector<valueLocation> modificationQueue;
 
+    /*
+        Parameter index:    The i-th element of the queue.
+
+        Description:        Checks the element in the queue for which unit broadcasted it.
+                            Prints the modification's information as formatted in the instructions.
+
+        Note:               Private so that individual elements can not be printed without printing
+                            every element.
+    */
     void printModification(int index){
         valueLocation location = modificationQueue[index];
 
-        if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; }
+        if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; return; }
 
-        if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; }
+        if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; return; }
 
-        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value << std::endl; }
+        if (location.isProgramCounter()){ std::cout << "pc is modified to " << std::hex << location.value << std::endl; return; }
     }
 
-    void clearBuffer(){ modificationQueue.clear(); }
+    /*
+        Description:    Empties the queue.
+        Note:           Private so that the queue can only
+                        be predictably cleared.
+    */
+    void clearQueue(){ modificationQueue.clear(); }
 
     public:
-    PrintEvent(){
-        this->modificationQueue.reserve(8);
-    }
+    /*
+        Default constructor to reserve some initial
+        space for the queue (8 elements to start with).
+    */
+    PrintEvent(){ this->modificationQueue.reserve(8); }
 
-    void addPrintEvent(LocationType memoryType, int idx, int value){
-        valueLocation location = {memoryType, idx, value};
+    /*
+        Parameter modifiedLocation:     The type of modification that happened (PC or memory unit).
+        Parameter idx:                  The associated index for a register file or data memory modification.
+                                        A dummy value should be provided for a PC modification.
+        Parameter value:                The associated value of the modification.
+    */
+    void addPrintEvent(LocationType modifiedLocation, int idx, int value){
+        valueLocation location = {modifiedLocation, idx, value};
         modificationQueue.push_back(location);
     }
 
+    /*
+        Description:    Prints the modification information for every change in the queue.
+                        The queue is cleared upon completion.
+    */
     void printModifications(){
         for (int idx = 0; idx << modificationQueue.size(); idx++){ printModification(idx); }
-        clearBuffer();
+        clearQueue();
     }
 };
 
