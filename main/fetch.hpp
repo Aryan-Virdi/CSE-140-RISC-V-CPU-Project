@@ -33,7 +33,7 @@ uint32_t fetch(int& PC, const std::vector<uint32_t>& instructionMemory, uint32_t
 
     PC = (branchTaken ? branchTarget : nextPC);
 
-    printQueue.addPrintEvent(locationType::programCounter, EMPTY_IDX, PC);
+    printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
     return instruction;
 }

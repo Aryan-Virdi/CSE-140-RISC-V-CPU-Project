@@ -4,29 +4,35 @@
 #include <vector>
 #include <iostream>
 
-const int EMPTY_IDX = -1;    // Used as index parameter for program counter events.
+/*
+    I now realize this entire system is most likely overkill.
+    We can replace it with normal cout statements later if desired.
+*/
+
+// Used as index parameter for program counter events.
+const int EMPTY_IDX = -1;
 
 // Enumerates types of locations that can broadcast their changes.
-enum class locationType{
+enum class LocationType{
     registerFile, dataMemory, programCounter
 };
 
 // Convenience wrapper to store such modification events.
 struct valueLocation{
-    locationType location;
+    LocationType location;
     int idx;
     int value;
 
     bool isRegFile(){
-        return (this->location == locationType::registerFile);
+        return (this->location == LocationType::registerFile);
     }
 
     bool isDataMem(){
-        return (this->location == locationType::dataMemory);
+        return (this->location == LocationType::dataMemory);
     }
 
     bool isProgramCounter(){
-        return (this->location == locationType::programCounter);
+        return (this->location == LocationType::programCounter);
     }
 };
 
@@ -47,7 +53,11 @@ class PrintEvent{
     void clearBuffer(){ modificationQueue.clear(); }
 
     public:
-    void addPrintEvent(locationType memoryType, int idx, int value){
+    PrintEvent(){
+        this->modificationQueue.reserve(8);
+    }
+
+    void addPrintEvent(LocationType memoryType, int idx, int value){
         valueLocation location = {memoryType, idx, value};
         modificationQueue.push_back(location);
     }
