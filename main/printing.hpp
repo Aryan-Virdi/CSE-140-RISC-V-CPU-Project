@@ -96,6 +96,7 @@ class PrintEvent{
             printModification(modificationQueue[idx]); 
         }
         clearQueue();
+        std::cout << std::endl;
     }
 };
 
