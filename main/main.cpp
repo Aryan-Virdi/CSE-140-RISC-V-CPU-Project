@@ -89,9 +89,9 @@ int main(int argc, char* argv[]) {
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
-        int operand1 = instruction.getRs1();
-        int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2());   // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
-                                                                                                    // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
+        int operand1 = instruction.getRs1Value();
+        int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
+                                                                                                        // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
         int aluResult /* = execute(); */;
 
         int data = mem(d_mem, aluResult, instruction.getRs2(), static_cast<bool>(memWrite));    // Returns an actual d_mem value if memWrite is true.
