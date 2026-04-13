@@ -4,11 +4,6 @@
 #include <vector>
 #include <iostream>
 
-/*
-    I now realize this entire system is most likely overkill.
-    We can replace it with normal cout statements later if desired.
-*/
-
 // Used as index parameter for program counter events.
 const int EMPTY_IDX = -1;
 
@@ -50,9 +45,7 @@ class PrintEvent{
         Note:               Private so that individual elements can not be printed without printing
                             every element.
     */
-    void printModification(int index){
-        ValueLocation location = modificationQueue[index];
-
+    void printModification(ValueLocation location){
         if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; return; }
 
         if (location.isDataMem()){ std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; return; }
@@ -65,7 +58,7 @@ class PrintEvent{
         Note:           Private so that the queue can only
                         be predictably cleared.
     */
-    void clearQueue(){ modificationQueue.clear(); }
+    void clearQueue(){ this->modificationQueue.clear(); }
 
     public:
     /*
@@ -82,7 +75,7 @@ class PrintEvent{
     */
     void addPrintEvent(LocationType modifiedLocation, int idx, int value){
         ValueLocation location = {modifiedLocation, idx, value};
-        modificationQueue.push_back(location);
+        this->modificationQueue.push_back(location);
     }
 
     /*
@@ -90,7 +83,9 @@ class PrintEvent{
                         The queue is cleared upon completion.
     */
     void printModifications(){
-        for (int idx = 0; idx < modificationQueue.size(); idx++){ printModification(idx); }
+        for (int idx = 0; idx < this->modificationQueue.size(); idx++){ 
+            printModification(modificationQueue[idx]); 
+        }
         clearQueue();
     }
 };
