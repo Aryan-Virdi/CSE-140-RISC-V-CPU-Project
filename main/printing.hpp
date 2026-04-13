@@ -18,7 +18,7 @@ enum class LocationType{
 };
 
 // Convenience wrapper to store such modification events.
-struct valueLocation{
+struct ValueLocation{
     LocationType location;
     int idx;
     int value;
@@ -39,7 +39,7 @@ struct valueLocation{
 
 // Actual interface for adding and executing printable events.
 class PrintEvent{
-    std::vector<valueLocation> modificationQueue;
+    std::vector<ValueLocation> modificationQueue;
 
     /*
         Parameter index:    The i-th element of the queue.
@@ -51,7 +51,7 @@ class PrintEvent{
                             every element.
     */
     void printModification(int index){
-        valueLocation location = modificationQueue[index];
+        ValueLocation location = modificationQueue[index];
 
         if (location.isRegFile()){ std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; return; }
 
@@ -81,7 +81,7 @@ class PrintEvent{
         Parameter value:                The associated value of the modification.
     */
     void addPrintEvent(LocationType modifiedLocation, int idx, int value){
-        valueLocation location = {modifiedLocation, idx, value};
+        ValueLocation location = {modifiedLocation, idx, value};
         modificationQueue.push_back(location);
     }
 
