@@ -47,17 +47,17 @@ class PrintEvent{
     */
     void printModification(ValueLocation location){
         if (location.isRegFile()){ 
-            std::cout << "x" << location.idx << " is modified to " << std::hex << location.value << std::endl; 
+            std::cout << "x" << location.idx << " is modified to 0x" << std::hex << location.value << std::endl; 
             return; 
         }
 
         if (location.isDataMem()){ 
-            std::cout << "memory " << std::hex << location.idx << " is modified to " << location.value << std::endl; 
+            std::cout << "memory 0x" << std::hex << location.idx << " is modified to 0x" << location.value << std::endl; 
             return; 
         }
 
         if (location.isProgramCounter()){ 
-            std::cout << "pc is modified to " << std::hex << location.value << std::endl; 
+            std::cout << "pc is modified to 0x" << std::hex << location.value << std::endl; 
             return; 
         }
     }
