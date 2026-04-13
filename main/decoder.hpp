@@ -8,7 +8,6 @@
 #include <ostream>
 
 #include "instruction.hpp"
-#include "sign_extension.hpp"
 #include "control_unit.hpp"
 
 // Concatenate opcode, funct3/7 into "funct7|funct3|opcode" for use as a key to a map.
@@ -97,6 +96,34 @@ uint32_t extractBits(uint32_t instruction, int start, int end){
 }
 
 /*
+    Parameter rawValue:     An unsigned 32-bit integer.
+    Parameter bits:         Integer amount of bits to read from.
+    
+    Returns:                A 32-bit signed integer where the bits of parameter "rawValue" is read in two's complement.
+*/
+int32_t twos_complement(uint32_t rawValue, int bits){
+    if (rawValue & (1 << (bits - 1))){     // Check if the sign-bit (most-sig bit) is one.
+        rawValue -= (1 << bits);           // If so, subtract that next power of 2.
+    }
+
+    return (static_cast<int32_t>(rawValue));
+}
+
+/*
+    Parameter bits:             A 32-bit unsigned integer representing an immediate value.
+    Parameter originalBits:     An integer value representing how many bits in the parameter "bits" represent the immediate value.
+    
+    Returns:                    A 32-bit signed integer that should represent the original value in parameter bits, either
+                                left zero-extended or newly one-extended.
+*/
+int32_t signExtend(uint32_t bits, int originalBits){
+    int shiftAmount = 32 - originalBits;
+    uint32_t leftShifted = bits << shiftAmount;
+
+    return ((static_cast<int32_t>(leftShifted)) >> shiftAmount);
+}
+
+/*
     Parameter opcode:  A 32-bit unsigned integer representing the instruction's opcode.
     
     Returns:           An enumerated value representing the instruction's format.
@@ -138,20 +165,6 @@ Instruction decode_R(uint32_t instruction){
 
     // Build the instruction object.
     return Instruction(Format::R, operation, (int)rd, (int)rs1, (int)rs2, (int)funct3, (int)funct7, IMM_EMPTY);
-}
-
-/*
-    Parameter rawValue:     An unsigned 32-bit integer.
-    Parameter bits:         Integer amount of bits to read from.
-    
-    Returns:                A 32-bit signed integer where the bits of parameter "rawValue" is read in two's complement.
-*/
-int32_t twos_complement(uint32_t rawValue, int bits){
-    if (rawValue & (1 << (bits - 1))){     // Check if the sign-bit (most-sig bit) is one.
-        rawValue -= (1 << bits);           // If so, subtract that next power of 2.
-    }
-
-    return (static_cast<int32_t>(rawValue));
 }
 
 /*
