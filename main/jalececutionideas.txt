@@ -34,6 +34,10 @@ int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extens
             break; // UNDEFINED
     }
 
+                                                                        // We can also make unique alu_controls for jal and jalr and use these cases
+                                                                        // to determine branching logic (force alu_zero).
+                                                                        // Both perform addition.
+
     // Overriding the alu flag for (jal/jalr) instructions
     //if (override_to_alu_zero) {
        // alu_zero = 1; // Forcing the conditions for jal/jalr to be taken
