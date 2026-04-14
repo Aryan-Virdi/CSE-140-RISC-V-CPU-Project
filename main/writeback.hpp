@@ -1,10 +1,14 @@
 #ifndef WRITEBACK_HPP
 #define WRITEBACK_HPP
 
-void writeback(int alu_result, int mem_read_data, bool reg_write, bool mem_to_reg, int &write_data, int& total_clock_cycles) {
+#include "printing.hpp"
+
+void writeback(int alu_result, int mem_read_data, bool reg_write, bool mem_to_reg, int register_file[32], int destination_register, int& total_clock_cycles, PrintEvent& printQueue){
     if (reg_write) {
-        write_data = mem_to_reg ? mem_read_data : alu_result;
+        register_file[destination_register] = mem_to_reg ? mem_read_data : alu_result;
         total_clock_cycles++; // Increment clock cycles for writeback stage
+
+        printQueue.addPrintEvent(LocationType::registerFile, destination_register, register_file[destination_register]);
     }
 
 }
