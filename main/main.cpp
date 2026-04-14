@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
         int signExtendedRelativeOffset = ((instruction.getFormat() == Format::SB) ? instruction.getImm() : 0);
         int aluResult = execute(operand1, operand2, alu_ctrl, signExtendedRelativeOffset, PC, alu_zero, branch_target);
 
-        int data = mem(d_mem, aluResult, instruction.getRs2(), static_cast<bool>(memWrite), printQueue);    // Returns an actual d_mem value if memWrite is true.
+        int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);    // Returns an actual d_mem value if memWrite is true.
                                                                                                             // The value in this function call is the second source register because
                                                                                                             // memory should only be written into by store-word, which provides the data in RS2.
 
