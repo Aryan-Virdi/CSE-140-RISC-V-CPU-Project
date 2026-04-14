@@ -92,7 +92,7 @@ class PrintEvent{
                         The queue is cleared upon completion.
     */
     void printModifications(){
-        for (int idx = 0; idx < this->modificationQueue.size(); idx++){ 
+        for (int idx = this->modificationQueue.size() - 1; idx >= 0; idx--){ 
             printModification(modificationQueue[idx]); 
         }
         clearQueue();
