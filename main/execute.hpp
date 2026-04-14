@@ -1,37 +1,53 @@
 #ifndef EXECUTE_HPP
 #define EXECUTE_HPP
 
-void execute(int operand1, int operand2, int alu_ctrl, int sign_extension_offset, int pc_plus_4, int& alu_zero, int& branch_target) {
-    int result = 0;
+void execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc_plus_4, int& alu_zero, int& branch_target) {
+    int alu_result = 0;
 
-    switch (alu_ctrl) {
+    switch (alu_control) {
         case 0b0000: 
-            result = operand1 & operand2; 
-            break;
+            alu_result = alu_intake_1 & alu_intake_2; 
+            break; // AND
+
         case 0b0001: 
-            result = operand1 | operand2; 
-            break;
+            alu_result = alu_intake_1 | alu_intake_2; 
+            break; // OR
+
         case 0b0010: 
-            result = operand1 + operand2; 
-            break;
+            alu_result = alu_intake_1 + alu_intake_2; 
+            break; // ADD
+
         case 0b0110: 
-            result = operand1 - operand2; 
-            break;
+            alu_result = alu_intake_1 - alu_intake_2; 
+            break; // SUB
+
         case 0b0111: 
-            result = (operand1 < operand2) ? 1 : 0; 
-            break;
+            alu_result = (alu_intake_1 < alu_intake_2) ? 1 : 0; 
+            break; // SLT
+
         case 0b1100: 
-            result = ~(operand1 | operand2); 
-            break;
+            alu_result = ~(alu_intake_1 | alu_intake_2); 
+            break; // NOR
+
         default: 
-            result = 0; 
-            break;
+            alu_result = 0; 
+            break; // UNDEFINED
     }
 
-    alu_zero = (result == 0);
-    branch_target = pc_plus_4 + (sign_extension_offset << 1);   // <-- Does sign extension offset come from second operand or separate input?
-                                                                // Do we always update branch target regardless of branch signal, or only when branch signal is true?
-                                                                // Either way, as long as fetch always does PC+4 when branch signal is off, target if it is on, it will work.
+    alu_zero = (alu_result == 0);
+    branch_target = pc_plus_4 + (sign_extension_offset << 1);   
 }
 
+// Branch target:
+// Is always computed here.
+// The fetch stage will choose between PC+4 and this value
+// based on the branch control signal and alu_zero
+
+// sign_extension_offset:
+// Comes specifically from the instruction’s immediate field
+// Is always sign-extended
+// Used only for branch address calculation
+
+// alu_intake_2 -> goes into the ALU
+// sign_extension_offset -> goes into branch address logic
 #endif
