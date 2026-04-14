@@ -13,6 +13,7 @@
 #include "decoder.hpp"
 #include "execute.hpp"
 #include "writeback.hpp"
+#include "printing.hpp"
 
 using std::string;
 using std::cout;
@@ -111,13 +112,12 @@ int main(int argc, char* argv[]) {
         int signExtendedRelativeOffset = ((instruction.getFormat() == Format::SB) ? instruction.getImm() : 0);
         int aluResult = execute(operand1, operand2, alu_ctrl, signExtendedRelativeOffset, PC, alu_zero, branch_target);
 
-        int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);    // Returns an actual d_mem value if memWrite is true.
-                                                                                                            // The value in this function call is the second source register because
-                                                                                                            // memory should only be written into by store-word, which provides the data in RS2.
+        int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
+                                                                                                                // The value in this function call is the second source register because
+                                                                                                                // memory should only be written into by store-word, which provides the data in RS2.
 
         writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
 
-        // total_clock_cycles++;
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
         printQueue.printModifications();    // Print this cycle's modifications.
     }
