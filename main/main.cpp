@@ -41,13 +41,26 @@ int memToReg = 0;
 int memRead = 0;
 int ALUOp = 0;
 
+// Global control signal interface.
 IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead, &ALUOp);
 
+// Execution signals for use in comparison/branching.
 int alu_zero = 0;
 int branch_target = 0;
 
+// Queue for printing modifications.
+// Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
 
+/*
+    Parameter argc: Number of arguments passed in by terminal.
+    Parameter argv: char pointer array containing those arguments. Should be in the form of:
+                            argv[0]: program name
+                            argv[1]: input file containing machine code instruction(s)
+                            argv[2]: a flag describing which sample initialization to use (--sample-1 or --sample-2)
+
+    Returns:        Successful code upon graceful completion. Specific error code otherwise.
+*/
 int main(int argc, char* argv[]) {
     if (argc < 2){ 
         cerr << "Input file name not provided. Program terminating." << endl;
@@ -58,7 +71,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
 
     // Terminal argument "--sample-init" initializes memories to sample values.
-    if (argc == 3){
+    if (argc >= 3){
         string sampleArg = argv[2];
         if (sampleArg == "--sample-1"){
             rf[x1] = 0x20;
