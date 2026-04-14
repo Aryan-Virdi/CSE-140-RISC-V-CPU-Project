@@ -29,7 +29,9 @@ void execute(int operand1, int operand2, int alu_ctrl, int sign_extension_offset
     }
 
     alu_zero = (result == 0);
-    branch_target = pc_plus_4 + (sign_extension_offset << 1);
+    branch_target = pc_plus_4 + (sign_extension_offset << 1);   // <-- Does sign extension offset come from second operand or separate input?
+                                                                // Do we always update branch target regardless of branch signal, or only when branch signal is true?
+                                                                // Either way, as long as fetch always does PC+4 when branch signal is off, target if it is on, it will work.
 }
 
 #endif
