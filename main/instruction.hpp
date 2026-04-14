@@ -88,6 +88,7 @@ const int IMM_EMPTY = -999999999;   // Very small number to show that the instru
 
 const int I_TYPE_IMM_BITS = 12;     // Amount of bits of immediate in I-type instructions.
 const int S_SB_TYPE_IMM_BITS = 12;  // Amoung ot bits of immediate in S- and SB-type instructions.
+const int UJ_TYPE_IMM_BITS = 21;
 
 // Encapsulates the data of the instruction as an object.
 class Instruction {

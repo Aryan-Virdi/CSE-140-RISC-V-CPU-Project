@@ -283,7 +283,7 @@ Instruction decode_UJ(uint32_t instruction){
 
     uint32_t raw_immediate = (twentiethBit << 20) | (imm_10_to_1bit << 1) | (eleventhBit << 11) |(imm_19_to_12 << 12); 
 
-    int32_t immediate = twos_complement(raw_immediate, 21); // 20 bits of immediate, but we need to account for the sign bit as well.
+    int32_t immediate = twos_complement(raw_immediate, 21); // 20 bits of immediate, but we need to account for [future] left-shift-by-1.
 
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
 }
@@ -313,6 +313,7 @@ Instruction decode(uint32_t instruction, IControl& ctrlSignals, const int regist
             decodedInstruction = decode_SB(instruction); 
             decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
             decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
+            decodedInstruction.setImm(signExtend(decodedInstruction.getImm(), S_SB_TYPE_IMM_BITS));
             break;
 
         case Format::I:   
@@ -325,13 +326,15 @@ Instruction decode(uint32_t instruction, IControl& ctrlSignals, const int regist
             decodedInstruction = decode_S(instruction); 
             decodedInstruction.setRs1Value(registerFile[decodedInstruction.getRs1()]);
             decodedInstruction.setRs2Value(registerFile[decodedInstruction.getRs2()]);
+            decodedInstruction.setImm(signExtend(decodedInstruction.getImm(), S_SB_TYPE_IMM_BITS));
             break;
 
         case Format::UJ:   
-            decodedInstruction = decode_UJ(instruction); break;
-
-        default:
+            decodedInstruction = decode_UJ(instruction); 
+            decodedInstruction.setImm(signExtend(decodedInstruction.getImm(), UJ_TYPE_IMM_BITS));
             break;
+
+        default: break;
     }
 
     return decodedInstruction;
