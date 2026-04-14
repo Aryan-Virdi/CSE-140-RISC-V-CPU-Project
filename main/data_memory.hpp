@@ -2,7 +2,9 @@
 #define DATA_MEMORY_HPP 
 
 #include <cstdint>
+
 #include "exit_codes.h"
+#include "printing.hpp"
 
 /*
     Parameter dataMemory[32]:   Read-only reference to the data memory array.
@@ -40,9 +42,10 @@ void storeMemory(int dataMemory[32], int address, int value){
 
     Note:                       Assumes that address is only ever an integer multiple of 4.
 */
-int mem(int dataMemory[32], int address, int value, bool memWrite){
+int mem(int dataMemory[32], int address, int value, bool memWrite, PrintEvent& printQueue){
     if (memWrite == true){
         storeMemory(dataMemory, address, value);
+        printQueue.addPrintEvent(LocationType::dataMemory, address, value);
         return SUCCESS;
     } else {
         return retrieveMemory(dataMemory, address);
