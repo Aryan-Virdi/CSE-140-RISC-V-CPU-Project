@@ -107,11 +107,13 @@ int main(int argc, char* argv[]) {
         int operand1 = instruction.getRs1Value();
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
-        int aluResult = execute(operand1, operand2, alu_ctrl, PC, alu_zero, branch_target);
+
+        int signExtendedRelativeOffset = ((instruction.getFormat() == Format::SB) ? instruction.getImm() : 0);
+        int aluResult = execute(operand1, operand2, alu_ctrl, signExtendedRelativeOffset, PC, alu_zero, branch_target);
 
         int data = mem(d_mem, aluResult, instruction.getRs2(), static_cast<bool>(memWrite), printQueue);    // Returns an actual d_mem value if memWrite is true.
-                                                                                                // The value in this function call is the second source register because
-                                                                                                // memory should only be written into by store-word, which provides the data in RS2.
+                                                                                                            // The value in this function call is the second source register because
+                                                                                                            // memory should only be written into by store-word, which provides the data in RS2.
 
         // int writeDataSource = (static_cast<bool>(memToReg)) ? data : aluResult;                 // data to be written back is from "data" if memToReg is true. Directly from the ALU otherwise.
                                                                                                 // The data/writeDataSource logic holds as long as memWr is only ever true for "sw," as well as
