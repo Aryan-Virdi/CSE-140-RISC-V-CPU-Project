@@ -72,9 +72,9 @@ class PrintEvent{
     public:
     /*
         Default constructor to reserve some initial
-        space for the queue (8 elements to start with).
+        space for the queue (2 elements to start with).
     */
-    PrintEvent(){ this->modificationQueue.reserve(8); }
+    PrintEvent(){ this->modificationQueue.reserve(2); }
 
     /*
         Parameter modifiedLocation:     The type of modification that happened (PC or memory unit).
