@@ -8,7 +8,8 @@ void writeback(int alu_result, int mem_read_data, bool reg_write, bool mem_to_re
         int value = mem_to_reg ? mem_read_data : alu_result;
         register_file[destination_register] = value;
 
-        printQueue.addPrintEvent(LocationType::registerFile, destination_register, value);
+        storeMemory(register_file, x0, 0); // keeps x0 = 0
+        if (destination_register != x0){ printQueue.addPrintEvent(LocationType::registerFile, destination_register, value); }   // Print only modifications done to any thing other than x0.
     }
 
     total_clock_cycles++; // Increment clock cycles for writeback stage
