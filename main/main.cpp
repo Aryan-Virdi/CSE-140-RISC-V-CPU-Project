@@ -101,6 +101,8 @@ int main(int argc, char* argv[]) {
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
 
     while ((PC/4) < instructionMemory.size()){
+        storeMemory(rf, x0, 0);
+
         uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
