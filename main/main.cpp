@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
 
     while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), printQueue);
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
@@ -115,9 +115,6 @@ int main(int argc, char* argv[]) {
                                                                                                             // The value in this function call is the second source register because
                                                                                                             // memory should only be written into by store-word, which provides the data in RS2.
 
-        // int writeDataSource = (static_cast<bool>(memToReg)) ? data : aluResult;                 // data to be written back is from "data" if memToReg is true. Directly from the ALU otherwise.
-                                                                                                // The data/writeDataSource logic holds as long as memWr is only ever true for "sw," as well as
-                                                                                                // memToReg is always false for "sw."
         writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
 
         // total_clock_cycles++;
