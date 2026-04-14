@@ -283,7 +283,7 @@ Instruction decode_UJ(uint32_t instruction){
 
     uint32_t raw_immediate = (twentiethBit << 20) | (imm_10_to_1bit << 1) | (eleventhBit << 11) |(imm_19_to_12 << 12); 
 
-    int32_t immediate = twos_complement(raw_immediate, 21); // 20 bits of immediate, but we need to account for [future] left-shift-by-1.
+    int32_t immediate = twos_complement(raw_immediate, UJ_TYPE_IMM_BITS); // 20 bits of immediate, but we need to account for left-shift-by-1.
 
     return Instruction(Format::UJ, operation, (int)rd, RS1_EMPTY, RS2_EMPTY, FUNCT3_EMPTY, FUNCT7_EMPTY, (int)immediate);
 }
