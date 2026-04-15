@@ -55,6 +55,33 @@ int branch_target = 0;
 // Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
 
+void singleCycleCPU(){
+    while ((PC/4) < instructionMemory.size()){
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), printQueue);
+        Instruction instruction = decode(currInstruction, controlSignals, rf);
+
+        int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
+        int operand1 = instruction.getRs1Value();
+        int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
+                                                                                                        // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
+
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, branch_target);
+
+        int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
+                                                                                                                // The value in this function call is the second source register because
+                                                                                                                // memory should only be written into by store-word, which provides the data in RS2.
+
+        writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
+
+        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        printQueue.printModifications();    // Print this cycle's modifications.
+    }
+    
+    cout << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
+}
+
+void pipelinedCPU(){}
+
 /*
     Parameter argc: Number of arguments passed in by terminal.
     Parameter argv: char pointer array containing those arguments. Should be in the form of:
@@ -70,12 +97,20 @@ int main(int argc, char* argv[]) {
         return ILLEGAL_ARGUMENT;
     }
 
+    bool pipelined = false;
+
     // All 32 registers initialized to zero.
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
 
-    // Terminal argument "--sample-init" initializes memories to sample values.
+    // Terminal argument "--pipelined" sets program to use 5-stage pipelined implementation.
     if (argc >= 3){
-        string sampleArg = argv[2];
+        string archArg = argv[2];
+        if (archArg == "--pipelined") { pipelined = true; }
+    }
+
+    // Terminal argument "--sample-init" initializes memories to sample values.
+    if (argc == 4){
+        string sampleArg = argv[3];
         if (sampleArg == "--sample-1"){
             rf[x1] = 0x20;
             rf[x2] = 0x5;
@@ -100,28 +135,11 @@ int main(int argc, char* argv[]) {
     string programFileName = argv[1];
     populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
 
-    while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), printQueue);
-        Instruction instruction = decode(currInstruction, controlSignals, rf);
-
-        int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
-        int operand1 = instruction.getRs1Value();
-        int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
-                                                                                                        // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
-
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, branch_target);
-
-        int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
-                                                                                                                // The value in this function call is the second source register because
-                                                                                                                // memory should only be written into by store-word, which provides the data in RS2.
-
-        writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
-
-        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications();    // Print this cycle's modifications.
+    if (pipelined){
+        pipelinedCPU();
+    } else {
+        singleCycleCPU();
     }
-
-    cout << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
 
     return SUCCESS;
 }
