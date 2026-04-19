@@ -70,17 +70,17 @@ int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pi
             rf[x11] = 0x4;
             storeMemory(d_mem, 0x70, 0x5);
             storeMemory(d_mem, 0x74, 0x10);
-            break;
+            continue;
         } else if (arg == "--sample-2"){
             rf[s0] = 0x20;
             rf[a0] = 0x5;
             rf[a1] = 0x2;
             rf[a2] = 0xA;
             rf[a3] = 0xF;
-            break;
+            continue;
         } else if (arg == "--pipelined"){
             pipelined = true;
-            break;
+            continue;
         } else if (j == (argc - 1)){
             std::cerr << "Malformed argument(s). Program terminating." << std::endl;
             return ILLEGAL_ARGUMENT;
