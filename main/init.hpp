@@ -81,7 +81,7 @@ int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pi
         } else if (arg == "--pipelined"){
             pipelined = true;
             continue;
-        } else if (j == (argc - 1)){
+        } else {
             std::cerr << "Malformed argument(s). Program terminating." << std::endl;
             return ILLEGAL_ARGUMENT;
         }
