@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "register_indices.h"
-#include "instruction_memory.hpp"
+#include "init.hpp"
 #include "data_memory.hpp"
 #include "exit_codes.h"
 #include "control_unit.hpp"
