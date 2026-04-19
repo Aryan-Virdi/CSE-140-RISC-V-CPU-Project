@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "exit_codes.h"
+#include "register_indices.h"
 
 
 /*
@@ -34,6 +35,57 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
     }
 
     return SUCCESS;
+}
+
+/*
+    Parameter argc:                 An integer representing how many terminal arguments were supplied.
+    Parameter argv[]:               C-style array that holds the terminal arguments.
+    Parameter rf[32]:               A reference to the register file array.
+    Parameter pipelined:            A reference to the global boolean pipelined. Determines which architecture to use.
+    Parameter instructionMemory:    A reference to a vector of uint32_t, which represents the machine code instructions.
+
+    Note:                           Also handles initialization of sample cases and populating instruction memory.
+
+    Returns:                        Success code on graceful initialization. A specific error code otherwise.                           
+
+*/
+int processArguments(int argc, char* argv[], int rf[32], bool& pipelined, std::vector<uint32_t>& instructionMemory){
+    bool optionalArgsPresent;
+    if (argc > 2){ optionalArgsPresent = true; }
+
+    std::vector<std::string> arguments(argc);
+    for (int i = 0; i < argc; i++){ arguments[i] = static_cast<std::string>(argv[i]); }
+
+    std::string programFileName = arguments[1];
+    if (!optionalArgsPresent) { return SUCCESS; };
+
+    for (int j = 2; j < argc; j++){
+        std::string arg = arguments[j];
+        if (arg == "--sample-1"){
+            rf[x1] = 0x20;
+            rf[x2] = 0x5;
+            rf[x10] = 0x70;
+            rf[x11] = 0x4;
+            storeMemory(d_mem, 0x70, 0x5);
+            storeMemory(d_mem, 0x74, 0x10);
+            break;
+        } else if (arg == "--sample-2"){
+            rf[s0] = 0x20;
+            rf[a0] = 0x5;
+            rf[a1] = 0x2;
+            rf[a2] = 0xA;
+            rf[a3] = 0xF;
+            break;
+        } else if (arg == "--pipelined"){
+            pipelined = true;
+            break;
+        } else if (j == (argc - 1)){
+            std::cerr << "Malformed argument(s). Program terminating." << std::endl;
+            return ILLEGAL_ARGUMENT;
+        }
+    }
+
+    return populateInstructionMemory(programFileName, instructionMemory);
 }
 
 #endif

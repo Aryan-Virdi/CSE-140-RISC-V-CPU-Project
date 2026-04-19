@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "register_indices.h"
 #include "init.hpp"
 #include "data_memory.hpp"
 #include "exit_codes.h"
@@ -85,9 +84,9 @@ void pipelinedCPU(){}
 /*
     Parameter argc: Number of arguments passed in by terminal.
     Parameter argv: char pointer array containing those arguments. Should be in the form of:
-                            argv[0]: program name
-                            argv[1]: input file containing machine code instruction(s)
-                            argv[2]: a flag describing which sample initialization to use (--sample-1 or --sample-2)
+                            argv[0]:    program name
+                            argv[1]:    input file containing machine code instruction(s)
+                            argv[2-3]:  optional sample and architecture flags
 
     Returns:        Successful code upon graceful completion. Specific error code otherwise.
 */
@@ -102,38 +101,9 @@ int main(int argc, char* argv[]) {
     // All 32 registers initialized to zero.
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
 
-    // Terminal argument "--pipelined" sets program to use 5-stage pipelined implementation.
-    if (argc >= 3){
-        string archArg = argv[2];
-        if (archArg == "--pipelined") { pipelined = true; }
-    }
-
-    // Terminal argument "--sample-init" initializes memories to sample values.
-    if (argc == 4){
-        string sampleArg = argv[3];
-        if (sampleArg == "--sample-1"){
-            rf[x1] = 0x20;
-            rf[x2] = 0x5;
-            rf[x10] = 0x70;
-            rf[x11] = 0x4;
-
-            storeMemory(d_mem, 0x70, 0x5);
-            storeMemory(d_mem, 0x74, 0x10);
-
-        } else if (sampleArg == "--sample-2"){
-            rf[s0] = 0x20;
-            rf[a0] = 0x5;
-            rf[a1] = 0x2;
-            rf[a2] = 0xA;
-            rf[a3] = 0xF;
-        } else {
-            cerr << "Sample case argument malformed. Program terminating." << endl;
-            return ILLEGAL_ARGUMENT;
-        }
-    }
-
-    string programFileName = argv[1];
-    populateInstructionMemory(programFileName, instructionMemory);  // Populate instruction memory with program instructions.
+    // Handle terminal arguments accordingly.
+    int processedCode = processArguments(argc, argv, rf, pipelined, instructionMemory);
+    if (processedCode != SUCCESS){ return processedCode; }  // If there was an error, terminate the program entirely.
 
     if (pipelined){
         pipelinedCPU();
