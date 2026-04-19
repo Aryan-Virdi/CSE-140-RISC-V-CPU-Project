@@ -79,7 +79,9 @@ void singleCycleCPU(){
     cout << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
 }
 
-void pipelinedCPU(){}
+void pipelinedCPU(){
+    cout << "Hello! o/" << endl;
+}
 
 /*
     Parameter argc: Number of arguments passed in by terminal.
@@ -102,7 +104,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
 
     // Handle terminal arguments accordingly.
-    int processedCode = processArguments(argc, argv, rf, pipelined, instructionMemory);
+    int processedCode = processArguments(argc, argv, rf, d_mem, pipelined, instructionMemory);
     if (processedCode != SUCCESS){ return processedCode; }  // If there was an error, terminate the program entirely.
 
     if (pipelined){

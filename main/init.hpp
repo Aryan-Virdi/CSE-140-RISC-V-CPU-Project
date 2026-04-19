@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "exit_codes.h"
+#include "data_memory.hpp"
 #include "register_indices.h"
 
 
@@ -41,6 +42,7 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
     Parameter argc:                 An integer representing how many terminal arguments were supplied.
     Parameter argv[]:               C-style array that holds the terminal arguments.
     Parameter rf[32]:               A reference to the register file array.
+    Parameter d_mem[32]:            A reference to the data memory array.
     Parameter pipelined:            A reference to the global boolean pipelined. Determines which architecture to use.
     Parameter instructionMemory:    A reference to a vector of uint32_t, which represents the machine code instructions.
 
@@ -49,7 +51,7 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
     Returns:                        Success code on graceful initialization. A specific error code otherwise.                           
 
 */
-int processArguments(int argc, char* argv[], int rf[32], bool& pipelined, std::vector<uint32_t>& instructionMemory){
+int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pipelined, std::vector<uint32_t>& instructionMemory){
     bool optionalArgsPresent;
     if (argc > 2){ optionalArgsPresent = true; }
 
