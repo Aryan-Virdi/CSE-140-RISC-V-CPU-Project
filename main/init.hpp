@@ -59,7 +59,7 @@ int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pi
     for (int i = 0; i < argc; i++){ arguments[i] = static_cast<std::string>(argv[i]); }
 
     std::string programFileName = arguments[1];
-    if (!optionalArgsPresent) { return SUCCESS; };
+    if (!optionalArgsPresent) { return populateInstructionMemory(programFileName, instructionMemory); };
 
     for (int j = 2; j < argc; j++){
         std::string arg = arguments[j];
