@@ -37,13 +37,13 @@ class PrintEvent{
     std::vector<ValueLocation> modificationQueue;
 
     /*
-        Parameter index:    The i-th element of the queue.
+        Parameter location:     The location type where the change occurred.
 
-        Description:        Checks the element in the queue for which unit broadcasted it.
-                            Prints the modification's information as formatted in the instructions.
+        Description:            Checks the element in the queue for which unit broadcasted it.
+                                Prints the modification's information as formatted in the instructions.
 
-        Note:               Private so that individual elements can not be printed without printing
-                            every element.
+        Note:                   Private so that individual elements can not be printed without printing
+                                every element and then clearing.
     */
     void printModification(ValueLocation location){
         if (location.isRegFile()){ 
