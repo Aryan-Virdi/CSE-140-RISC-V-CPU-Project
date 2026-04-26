@@ -86,7 +86,7 @@ class ID_EXE {
     public:
     ID_EXE(){}
 
-    void updateInfo(IF_ID if_id_reg, IControl controlUnit, int rs2, int rd, int operand1, int operand2, int immediate){
+    void updateInfo(IF_ID if_id_reg, IControl controlUnit, int rs1, int rs2, int rd, int operand1, int operand2, int immediate){
         updateRegWr(controlUnit.getRegWr());
         updateBranch(controlUnit.getBranch());
         updateALUSrc(controlUnit.getALUSrc());
