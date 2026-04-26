@@ -2,16 +2,9 @@
 #define PIPELINE_REGISTERS_HPP
 
 #include <cstdint>
+
+#include "../util/bit_utils.hpp"
 #include "../control_unit.hpp"
-
-uint32_t extractBits(uint32_t instruction, int start, int end){
-    uint32_t rightShiftedNumber = instruction >> start;
-    uint32_t mask = 1;
-    uint32_t width = (end - start + 1);
-    uint32_t bitMask = (mask << width) - 1;
-
-    return (rightShiftedNumber & bitMask);
-}
 
 /*
     The four pipeline registers, responsible for holding intermediate
