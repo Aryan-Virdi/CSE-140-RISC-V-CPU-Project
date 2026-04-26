@@ -1,21 +1,41 @@
 #ifndef WRITEBACK_HPP
 #define WRITEBACK_HPP
 
-#include "printing.hpp"
 
-void writeback(int alu_result, int mem_read_data, bool reg_write, bool mem_to_reg, int register_file[32], int destination_register, int& total_clock_cycles, PrintEvent& printQueue){
-    if (reg_write) {
-        int value = mem_to_reg ? mem_read_data : alu_result;
-        register_file[destination_register] = value;
-
-        storeMemory(register_file, x0, 0); // keeps x0 = 0
-        if (destination_register != x0){ printQueue.addPrintEvent(LocationType::registerFile, destination_register, value); }   // Print only modifications done to anything other than x0.
+void writeback(int alu_result, int mem_read_data, int result_source,bool reg_write, int register_file[32], int destination_register, int& total_clock_cycles, PrintEvent& printQueue, int pc_plus_4
+){
+    if (!reg_write) {
+        total_clock_cycles++;
+        return;
     }
 
-    total_clock_cycles++; // Increment clock cycles for writeback stage
+    int value;
+
+    switch (result_source) {
+        case 0: 
+        value = alu_result; 
+        break;
+
+        case 1: 
+        value = mem_read_data; 
+        break;
+
+        case 2: 
+        value = pc_plus_4; 
+        break;   // jal/jalr
+
+        default: 
+        value = 0; 
+        break;
+    }
+
+    register_file[destination_register] = value;
+
+    storeMemory(register_file, x0, 0);
+
+    if (destination_register != x0) {
+        printQueue.addPrintEvent(LocationType::registerFile, destination_register, value);
+    }
+
+    total_clock_cycles++;
 }
-
-#endif
-
-// Writeback stage: selects data to write into register
-// mem_to_reg = 1 -> memory, 0 -> ALU
