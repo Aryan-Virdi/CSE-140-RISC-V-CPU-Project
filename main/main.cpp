@@ -13,6 +13,8 @@
 #include "execute.hpp"
 #include "writeback.hpp"
 #include "printing.hpp"
+#include "pipeline/pipeline_registers.hpp"
+#include "pipeline/hazard_detection.hpp"
 
 using std::string;
 using std::cout;
@@ -80,6 +82,13 @@ void singleCycleCPU(){
 }
 
 void pipelinedCPU(){
+    IF_ID   if_id_buffer   = IF_ID();
+    ID_EXE  id_exe_buffer  = ID_EXE();
+    EXE_MEM exe_mem_buffer = EXE_MEM();
+    MEM_WB  mem_wb_buffer  = MEM_WB();
+
+    HazardDetectionUnit hazardDetectionUnit(&if_id_buffer, &id_exe_buffer);
+
     cout << "Hello! o/" << endl;
 }
 
