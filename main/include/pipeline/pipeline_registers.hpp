@@ -2,7 +2,7 @@
 #define PIPELINE_REGISTERS_HPP
 
 #include <cstdint>
-#include "control_unit.hpp"
+#include "../control_unit.hpp"
 
 /*
     The four pipeline registers, responsible for holding intermediate
@@ -12,6 +12,11 @@
     Lecture-4_Processor-4, slides 4-5.
 */
 
+
+/*
+    At the beginning of the datapaths, just after instruction fetch.
+    Input will be read and then decoded.
+*/
 class IF_ID {
     // Current program counter
     int PC = 0;
@@ -34,6 +39,13 @@ class IF_ID {
     uint32_t getInstr() const { return this->instruction; }
 };
 
+/*
+    After decoding, the control signals will be placed
+    into this buffer. Other decoding results will be placed
+    into this buffer before execution as well.
+
+    Note that rs2 is saved regardless of operand 2's source.
+*/
 
 class ID_EXE {
     // Previously generated ontrol signals
@@ -103,6 +115,12 @@ class ID_EXE {
     int getImm()        const { return this->signExtImm;  }
 };
 
+/*
+    All results of execution are placed into this pipline
+    register. Branch target is stored here, so it will be
+    read and used in EXE stage.
+*/
+
 class EXE_MEM {
     // Previously generated control signals
     int regWr = 0;
@@ -162,6 +180,11 @@ class EXE_MEM {
     int getALUResult()    const { return this->aluResult;    }
     int getBranchTarget() const { return this->branchTarget; }
 };
+
+/*
+    The final pipeline register. The data regarding writes
+    is stored here and then used for WB stage.
+*/
 
 class MEM_WB {
     // Previously generated control signals
