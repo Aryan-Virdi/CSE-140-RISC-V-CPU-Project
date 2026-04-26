@@ -64,6 +64,7 @@ class ID_EXE {
     int signExtImm = 0;
 
     // Relvant registers
+    int rs1 = 0;
     int rs2 = 0;
     int rd = 0;
 
@@ -75,6 +76,7 @@ class ID_EXE {
     void updateMemRd(int value)     { this->memRd = value;       }
     void updateALUOp(int value)     { this->aluOp = value;       }
     void updateJump(int value)      { this->jump = value;        }
+    void updateRs1(int value)       { this->rs1 = value;         }
     void updateRs2(int value)       { this->rs2 = value;         }
     void updateRd(int value)        { this->rd = value;          }
     void updateOp1(int value)       { this->operand1 = value;    }
@@ -93,6 +95,7 @@ class ID_EXE {
         updateMemToReg(controlUnit.getMemToReg());
         updateMemRd(controlUnit.getMemRd());
         // updateJump(controlUnit.getJump());
+        updateRs1(rs1);
         updateRs2(rs2);
         updateRd(rd);
         updateOp1(operand1);
@@ -108,6 +111,7 @@ class ID_EXE {
     int getMemRd()      const { return this->memRd;       }
     int getALUOp()      const { return this->aluOp;       }
     int getJump()       const { return this->jump;        }
+    int getRs1()        const { return this->rs1;         }
     int getRs2()        const {return this->rs2;          }
     int getRd()         const { return this->rd;          }
     int getOp1()        const { return this->operand1;    }
