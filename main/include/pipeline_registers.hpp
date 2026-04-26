@@ -9,7 +9,7 @@
     information and carrying relevant instruction info forwards.
 
     Pipeline registers are defined as shown in 
-    Lecture-4_Processor 4, slide 5.
+    Lecture-4_Processor-4, slides 4-5.
 */
 
 class IF_ID {
