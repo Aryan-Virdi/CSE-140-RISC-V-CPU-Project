@@ -4,6 +4,15 @@
 #include <cstdint>
 #include "../control_unit.hpp"
 
+uint32_t extractBits(uint32_t instruction, int start, int end){
+    uint32_t rightShiftedNumber = instruction >> start;
+    uint32_t mask = 1;
+    uint32_t width = (end - start + 1);
+    uint32_t bitMask = (mask << width) - 1;
+
+    return (rightShiftedNumber & bitMask);
+}
+
 /*
     The four pipeline registers, responsible for holding intermediate
     information and carrying relevant instruction info forwards.
@@ -24,8 +33,15 @@ class IF_ID {
     // Machine code instruction
     uint32_t instruction = 0;
 
-    void updatePC(int value)         { this->PC = value;         } 
-    void updateInstr(uint32_t value){ this->instruction = value; }
+    // Source registers
+
+    int rs1 = 0;
+    int rs2 = 0;
+
+    void updatePC(int value)         { this->PC = value;          } 
+    void updateInstr(uint32_t value) { this->instruction = value; }
+    void updateRs1(int value)        { this->rs1 = value;         }
+    void updateRs2(int value)        { this->rs2 = value;         }
 
     public:
     IF_ID(){}
@@ -33,6 +49,8 @@ class IF_ID {
     void updateInfo(int PC, uint32_t instruction){
         updatePC(PC);
         updateInstr(instruction);
+        updateRs1(static_cast<int>(extractBits(instruction, 15, 19)));
+        updateRs2(static_cast<int>(extractBits(instruction, 20, 24)));
     }
 
     int getPC()         const { return this->PC;          }
@@ -64,7 +82,6 @@ class ID_EXE {
     int signExtImm = 0;
 
     // Relvant registers
-    int rs1 = 0;
     int rs2 = 0;
     int rd = 0;
 
@@ -76,7 +93,6 @@ class ID_EXE {
     void updateMemRd(int value)     { this->memRd = value;       }
     void updateALUOp(int value)     { this->aluOp = value;       }
     void updateJump(int value)      { this->jump = value;        }
-    void updateRs1(int value)       { this->rs1 = value;         }
     void updateRs2(int value)       { this->rs2 = value;         }
     void updateRd(int value)        { this->rd = value;          }
     void updateOp1(int value)       { this->operand1 = value;    }
@@ -86,7 +102,7 @@ class ID_EXE {
     public:
     ID_EXE(){}
 
-    void updateInfo(IF_ID if_id_reg, IControl controlUnit, int rs1, int rs2, int rd, int operand1, int operand2, int immediate){
+    void updateInfo(IF_ID if_id_reg, IControl controlUnit, int rs2, int rd, int operand1, int operand2, int immediate){
         updateRegWr(controlUnit.getRegWr());
         updateBranch(controlUnit.getBranch());
         updateALUSrc(controlUnit.getALUSrc());
@@ -95,7 +111,6 @@ class ID_EXE {
         updateMemToReg(controlUnit.getMemToReg());
         updateMemRd(controlUnit.getMemRd());
         // updateJump(controlUnit.getJump());
-        updateRs1(rs1);
         updateRs2(rs2);
         updateRd(rd);
         updateOp1(operand1);
@@ -111,7 +126,6 @@ class ID_EXE {
     int getMemRd()      const { return this->memRd;       }
     int getALUOp()      const { return this->aluOp;       }
     int getJump()       const { return this->jump;        }
-    int getRs1()        const { return this->rs1;         }
     int getRs2()        const {return this->rs2;          }
     int getRd()         const { return this->rd;          }
     int getOp1()        const { return this->operand1;    }
