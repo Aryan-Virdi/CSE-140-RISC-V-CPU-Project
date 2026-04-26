@@ -55,6 +55,8 @@ class IF_ID {
 
     int getPC()         const { return this->PC;          }
     uint32_t getInstr() const { return this->instruction; }
+    int getRs1()        const { return this->rs1;         }
+    int getRs2()        const { return this->rs2;         }
 };
 
 /*
