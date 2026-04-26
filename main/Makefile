@@ -1,7 +1,7 @@
 CC = g++
 
 all:
-	$(CC) -std=c++17 -o cpu.exe main.cpp
+	$(CC) -std=c++17 -I./include -o cpu.exe main.cpp
 
 clean:
-	rm -f main.exe
+	rm -f cpu.exe
