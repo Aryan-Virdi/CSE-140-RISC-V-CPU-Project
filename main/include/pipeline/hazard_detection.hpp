@@ -13,7 +13,8 @@ class HazardDetectionUnit{
         this->id_exe_reg = id_exe_reg;
     }
 
-    bool checkLoadUse(){
+    // If true, stall pipeline.
+    bool stallPipeline(){
         bool memReadAtEXE = static_cast<bool>(id_exe_reg->getMemRd());
         int rd = id_exe_reg->getRd();
         int rs1 = if_id_reg->getRs1();
