@@ -41,29 +41,18 @@ int ALU(int alu_intake_1, int alu_intake_2, int alu_control, int& alu_zero){
     return alu_result;
 }
 
-int programCounterAdder(int sign_extension_offset, int& pc, int& pc_plus_4, bool branch, bool jump, bool PCSrc, int rs1){
-    int branchAndJumpMuxOutput = ((branch && alu_zero) || jump) ? sign_extension_offset : 4;
-    int PCSrcMuxOutput = PCSrc ? rs1 : pc;
+int programCounterAdder(int sign_extension_offset, int& pc_plus_4, int alu_zero, bool branch, bool jump, bool PCSrc, int rs1){
+    // int branchAndJumpMuxOutput = ((branch && alu_zero) || jump) ? (sign_extension_offset << 1) : 4;
+    // int PCSrcMuxOutput = PCSrc ? rs1 : pc;
 
-    return (branchAndJumpMuxOutput + PCSrcMuxOutput);
+    return pc_plus_4 + (sign_extension_offset << 1);   
 }
 
-int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
-    branch_target = programCounterAdder(sign_extension_offset, pc, pc_plus_4, branch, jump, PCSrc, rs1);
+int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
+    int alu_result = ALU(alu_intake_1, alu_intake_2, alu_control, alu_zero);
+    branch_target = programCounterAdder(sign_extension_offset, pc_plus_4, alu_zero, branch, jump, PCSrc, rs1);
 
-    return ALU(alu_intake_1, alu_intake_2, alu_control, alu_zero);
+    return alu_result;
 }
 
-// Branch target:
-// Is always computed here.
-// The fetch stage will choose between PC+4 and this value
-// based on the branch control signal and alu_zero
-
-// sign_extension_offset:
-// Comes specifically from the instruction’s immediate field
-// Is always sign-extended
-// Used only for branch address calculation
-
-// alu_intake_2 -> goes into the ALU
-// sign_extension_offset -> goes into branch address logic
 #endif

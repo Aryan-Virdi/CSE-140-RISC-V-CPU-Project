@@ -62,7 +62,7 @@ PrintEvent printQueue = PrintEvent();
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, nextPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
         std::cout << "imm=" << instruction.getImm() << std::endl;
 
@@ -74,7 +74,7 @@ void singleCycleCPU(){
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
         if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << std::endl;}
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, nextPC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
         PC = (jump || (branch && alu_zero)) ? branch_target : nextPC;
         printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
