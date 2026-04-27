@@ -71,7 +71,7 @@ void singleCycleCPU(){
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, jump, static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
 
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because
