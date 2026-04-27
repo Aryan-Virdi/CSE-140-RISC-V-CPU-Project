@@ -1,7 +1,7 @@
 #ifndef EXECUTE_HPP
 #define EXECUTE_HPP
 
-int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc_plus_4, int& alu_zero, bool jump, int& branch_target) {
+int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc_plus_4, int& alu_zero, bool jump, bool PCSrc, int rs1, int& branch_target) {
     int alu_result = 0;
 
     switch (alu_control) {
@@ -38,7 +38,8 @@ int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extens
     }
 
     alu_zero = (alu_result == 0);
-    branch_target = pc_plus_4 + (sign_extension_offset << 1);   
+    int baseAddrHolder = (PCSrc ? rs1 : pc_plus_4);
+    branch_target = baseAddrHolder + (sign_extension_offset << 1);
 
     return alu_result;
 }
