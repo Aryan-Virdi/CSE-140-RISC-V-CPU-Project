@@ -44,9 +44,10 @@ int memWrite = 0;
 int memToReg = 0;
 int memRead = 0;
 int ALUOp = 0;
+int jump = 0;
 
 // Global control signal interface.
-IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead, &ALUOp);
+IControl controlSignals = IControl(&regWrite, &branch, &ALUSrc, &memWrite, &memToReg, &memRead, &ALUOp, &jump);
 
 // Execution signals for use in comparison/branching.
 int alu_zero = 0;
@@ -58,7 +59,7 @@ PrintEvent printQueue = PrintEvent();
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), printQueue);
+        uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
