@@ -107,6 +107,7 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
         case 0b1101111:
             // UJ-Type; jal
             ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE);
+            break;
         case 0b1100111:
             // jalr instruction (I-type)
             ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE);
