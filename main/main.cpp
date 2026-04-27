@@ -61,6 +61,7 @@ PrintEvent printQueue = PrintEvent();
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
+        controlSignals.updateJump(0);
         uint32_t currInstruction = fetch(PC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
