@@ -43,16 +43,15 @@ int ALU(int alu_intake_1, int alu_intake_2, int alu_control, int& alu_zero){
 
 int programCounterAdder(int sign_extension_offset, int currPC, int alu_zero, bool branch, bool jump, bool PCSrc, int rs1){
     bool branch_taken = (branch && alu_zero);
-    int offset;
-    // int branchAndJumpMuxOutput = (branch_taken || jump) ? (sign_extension_offset << 1) : 4;
-    // int PCSrcMuxOutput = PCSrc ? rs1 : currPC;
+    bool jalr = (jump && PCSrc);
+
     if (branch_taken){
-       offset = (sign_extension_offset << 1);
-    } else if (jump){
-        offset = sign_extension_offset;
+       return (currPC + (sign_extension_offset << 1));
+    } else if (jalr){
+        return (rs1 + sign_extension_offset);
     }
 
-    return currPC + offset;
+    return (currPC + sign_extension_offset);
 }
 
 int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int& curr_pc, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
