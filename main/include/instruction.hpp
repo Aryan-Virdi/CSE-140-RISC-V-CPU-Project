@@ -87,8 +87,11 @@ const int FUNCT7_EMPTY = 0;
 const int IMM_EMPTY = -999999999;   // Very small number to show that the instruction object isn't given an [expectedly] proper immediate
 
 const int I_TYPE_IMM_BITS = 12;     // Amount of bits of immediate in I-type instructions.
-const int S_SB_TYPE_IMM_BITS = 12;  // Amoung ot bits of immediate in S- and SB-type instructions.
-const int UJ_TYPE_IMM_BITS = 21;
+const int S_SB_TYPE_IMM_BITS = 12;  // Amount ot bits of immediate in S- and SB-type instructions.
+const int UJ_TYPE_IMM_BITS = 21;    // 20 bits of immediate in UJ-type instructions.
+                                    // We currently left-shift-by-1 before reading the immediate as signed,
+                                    // so the length by use time is actually 21. This is likely incorrect,
+                                    // and we may change this to 20 later.
 
 // Encapsulates the data of the instruction as an object.
 class Instruction {
