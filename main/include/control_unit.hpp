@@ -167,6 +167,7 @@ int aluControl(int ALUOp, int funct3, int funct7){
                     }
                 default: return UNKNOWN;
             }
+        case 0b11: return 0b0011;
         default: return UNKNOWN;
     }
 }

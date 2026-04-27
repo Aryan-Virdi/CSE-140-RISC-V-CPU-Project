@@ -29,6 +29,9 @@ int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extens
             alu_result = ~(alu_intake_1 | alu_intake_2); 
             break; // NOR
 
+        case 0b0011:
+            alu_result = alu_intake_1;
+            break; // jal/jalr; alu_intake_1 should be PC+4 in this case.
         default: 
             alu_result = 0; 
             break; // UNDEFINED
