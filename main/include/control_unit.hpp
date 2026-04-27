@@ -10,7 +10,7 @@ const int UNKNOWN = -1;
 // Provides an interface for the control signals.
 // Will have to update to handle additional signal(s) for jal and jalr in the future.
 class IControl{
-    int* ctrlArray[7];
+    int* ctrlArray[8];
 
     enum ControlIndex : int {
         regWrIdx = 0,
@@ -19,11 +19,12 @@ class IControl{
         memWrIdx = 3,
         memToRegIdx = 4,
         memRdIdx = 5,
-        ALUOpIdx = 6
+        ALUOpIdx = 6,
+        jumpIdx = 7
     };
 
     public:
-    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd, int* ALUOp){
+    IControl(int* regWr, int* branch, int* ALUSrc, int* memWr, int* memToReg, int* memRd, int* ALUOp, int* jump){
         ctrlArray[ControlIndex::regWrIdx]     = regWr;
         ctrlArray[ControlIndex::branchIdx]    = branch;
         ctrlArray[ControlIndex::ALUSrcIdx]    = ALUSrc;
@@ -31,6 +32,7 @@ class IControl{
         ctrlArray[ControlIndex::memToRegIdx]  = memToReg;
         ctrlArray[ControlIndex::memRdIdx]     = memRd;
         ctrlArray[ControlIndex::ALUOpIdx]     = ALUOp;
+        ctrlArray[ControlIndex::jumpIdx]      = jump;
     }
 
     void updateRegWr(int value)   { *ctrlArray[ControlIndex::regWrIdx] = value;    }
@@ -40,8 +42,9 @@ class IControl{
     void updateMemToReg(int value){ *ctrlArray[ControlIndex::memToRegIdx] = value; }
     void updateMemRd(int value)   { *ctrlArray[ControlIndex::memRdIdx] = value;    }
     void updateALUOp(int value)   { *ctrlArray[ControlIndex::ALUOpIdx] = value;    }
+    void updateJump(int value)    { *ctrlArray[ControlIndex::jumpIdx] = value;     }
 
-    void updateAllSignals(int regWr, int branch, int ALUSrc, int ALUOp, int memWr, int memToReg, int memRd){
+    void updateAllSignals(int regWr, int branch, int ALUSrc, int ALUOp, int memWr, int memToReg, int memRd, int jump){
         updateRegWr(regWr);
         updateBranch(branch);
         updateALUSrc(ALUSrc);
@@ -49,6 +52,7 @@ class IControl{
         updateMemWr(memWr);
         updateMemToReg(memToReg);
         updateMemRd(memRd);
+        updateJump(jump);
     }
 
     int getRegWr()    const { return *ctrlArray[ControlIndex::regWrIdx];    }
@@ -58,6 +62,7 @@ class IControl{
     int getMemToReg() const { return *ctrlArray[ControlIndex::memToRegIdx]; }
     int getMemRd()    const { return *ctrlArray[ControlIndex::memRdIdx];    }
     int getALUOp()    const { return *ctrlArray[ControlIndex::ALUOpIdx];    }
+    int getJump()     const { return *ctrlArray[ControlIndex::jumpIdx];     }
 
 };
 
@@ -79,19 +84,23 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
     switch(opcode){
         case 0b0110011: 
             // R-Type
-            ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, 0b10, FALSE, FALSE, FALSE);
+            ctrlSignals.updateAllSignals(TRUE, FALSE, FALSE, 0b10, FALSE, FALSE, FALSE, FALSE);
             break;
         case 0b0010011: 
             // Generic I-type
-            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b10, FALSE, FALSE, FALSE);
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b10, FALSE, FALSE, FALSE, FALSE);
             break;
         case 0b0000011: 
-            // lw instruction
-            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, TRUE, TRUE);
+            // lw instruction (I-type)
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, TRUE, TRUE, FALSE);
             break;
-        // case 0b1100111:
-            // jalr instruction
-            // break;
+        case 0b1101111:
+            // UJ-Type; jal
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, FALSE, FALSE, TRUE);
+        case 0b1100111:
+            // jalr instruction (I-type)
+            ctrlSignals.updateAllSignals(TRUE, FALSE, TRUE, 0b00, FALSE, FALSE, FALSE, TRUE);
+            break;
         case 0b1100011: 
             // SB-type
             ctrlSignals.updateRegWr(FALSE);
@@ -101,10 +110,11 @@ void controlUnit(uint32_t opcode, IControl& ctrlSignals){
             ctrlSignals.updateMemWr(FALSE);
             // "Don't care about memToReg; ignore.
             ctrlSignals.updateMemRd(FALSE);
+            ctrlSignals.updateJump(FALSE);
             break;
         case 0b0100011: 
             // S-Type (sw)
-            ctrlSignals.updateAllSignals(FALSE, FALSE, TRUE, 0b00, TRUE, FALSE, FALSE);
+            ctrlSignals.updateAllSignals(FALSE, FALSE, TRUE, 0b00, TRUE, FALSE, FALSE, FALSE);
             break;
     }
 
