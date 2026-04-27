@@ -27,6 +27,7 @@ int total_clock_cycles = 0;
 // CPU's program counter
 int PC = 0;
 int nextPC = 0;
+int currPC = 0; // "Local" copy of PC before being incremented by fetch for use after.
 
 // CPU's register file. 32 registers
 int rf[32];
@@ -62,9 +63,9 @@ PrintEvent printQueue = PrintEvent();
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
-        uint32_t currInstruction = fetch(PC, nextPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
+        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
-        std::cout << "imm=" << instruction.getImm() << std::endl;
+        // std::cout << "imm=" << instruction.getImm() << std::endl;
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
         int operand1 = (static_cast<bool>(ALUSrc2) ? PC : instruction.getRs1Value());   // First operand of ALU operation is from rs1 if ALUSrc2 is false. Otherwise PC.
@@ -73,15 +74,14 @@ void singleCycleCPU(){
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
-        if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << std::endl;}
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
-        PC = (jump || (branch && alu_zero)) ? branch_target : nextPC;
-        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
+        // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << std::endl;}
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
+        // printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because
                                                                                                                 // memory should only be written into by store-word, which provides the data in RS2.
-
+        data = (static_cast<bool>(jump) ? PC : data);
         writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
 
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;

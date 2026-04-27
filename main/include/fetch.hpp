@@ -22,7 +22,7 @@
     Note:                           Assumes that PC is only ever a non-negative integer multiple of 4. 
                                     I.e., PC is either 0 or some multiple of 4.
 */
-uint32_t fetch(int& PC, int& nextPC, const std::vector<uint32_t>& instructionMemory, int branchTarget, bool branch, bool aluZero, bool jump, PrintEvent& printQueue){
+uint32_t fetch(int& PC, int& nextPC, int& currPC, const std::vector<uint32_t>& instructionMemory, int branchTarget, bool branch, bool aluZero, bool jump, PrintEvent& printQueue){
     int memoryIndex = PC / 4;
     if (!(memoryIndex < instructionMemory.size())){;
         std::cerr << "Exit Code: " << ERROR << std::endl;
@@ -30,6 +30,7 @@ uint32_t fetch(int& PC, int& nextPC, const std::vector<uint32_t>& instructionMem
     }
     
     uint32_t instruction = instructionMemory[memoryIndex];
+    currPC = PC;
     nextPC = PC + 4;
 
     bool branchTaken = ((branch && aluZero) || jump);

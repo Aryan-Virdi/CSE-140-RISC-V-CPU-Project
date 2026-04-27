@@ -41,16 +41,23 @@ int ALU(int alu_intake_1, int alu_intake_2, int alu_control, int& alu_zero){
     return alu_result;
 }
 
-int programCounterAdder(int sign_extension_offset, int& pc_plus_4, int alu_zero, bool branch, bool jump, bool PCSrc, int rs1){
-    // int branchAndJumpMuxOutput = ((branch && alu_zero) || jump) ? (sign_extension_offset << 1) : 4;
-    // int PCSrcMuxOutput = PCSrc ? rs1 : pc;
+int programCounterAdder(int sign_extension_offset, int currPC, int alu_zero, bool branch, bool jump, bool PCSrc, int rs1){
+    bool branch_taken = (branch && alu_zero);
+    int offset;
+    // int branchAndJumpMuxOutput = (branch_taken || jump) ? (sign_extension_offset << 1) : 4;
+    // int PCSrcMuxOutput = PCSrc ? rs1 : currPC;
+    if (branch_taken){
+       offset = (sign_extension_offset << 1);
+    } else if (jump){
+        offset = sign_extension_offset;
+    }
 
-    return pc_plus_4 + (sign_extension_offset << 1);   
+    return currPC + offset;
 }
 
-int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
+int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int& curr_pc, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
     int alu_result = ALU(alu_intake_1, alu_intake_2, alu_control, alu_zero);
-    branch_target = programCounterAdder(sign_extension_offset, pc_plus_4, alu_zero, branch, jump, PCSrc, rs1);
+    branch_target = programCounterAdder(sign_extension_offset, curr_pc, alu_zero, branch, jump, PCSrc, rs1);
 
     return alu_result;
 }
