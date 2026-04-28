@@ -97,9 +97,9 @@ int programCounterAdder(int sign_extended_offset, int currPC, int pc_plus_4, boo
     Note:                               Will modify branch target with either PC+4, rs1 + sign_extended_offset, or PC + sign_extended_offset.
 
 */
-int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extended_offset, int curr_pc, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int& branch_target) {
+int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extended_offset, int curr_pc, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
     int alu_result = ALU(alu_intake_1, alu_intake_2, alu_control, (alu_zero));
-    branch_target = programCounterAdder(sign_extended_offset, curr_pc, pc_plus_4, alu_zero, branch, jump, PCSrc, alu_intake_1);
+    branch_target = programCounterAdder(sign_extended_offset, curr_pc, pc_plus_4, alu_zero, branch, jump, PCSrc, rs1);
 
     return alu_result;
 }

@@ -84,7 +84,7 @@ void singleCycleCPU(){
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
         // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << " pc=" << PC << " nextPC=" << nextPC << std::endl;}  // Debug
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), branch_target);
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
         if (static_cast<bool>(branch) && static_cast<bool>(alu_zero) || static_cast<bool>(jump)) {
             PC = branch_target;
         } else {
