@@ -234,7 +234,7 @@ Instruction decode_UJ(uint32_t instruction){
     uint32_t eleventhBit = extractBits(instruction, 20, 20);
     uint32_t imm_19_to_12 = extractBits(instruction, 12, 19);
 
-    uint32_t raw_immediate = ((twentiethBit << 20) | (imm_19_to_12 << 12) | (eleventhBit << 11) | (imm_10_to_1bit << 1)); 
+    uint32_t raw_immediate = ((twentiethBit << 19) | (imm_19_to_12 << 11) | (eleventhBit << 10) | (imm_10_to_1bit << 0)); 
 
     int32_t immediate = twos_complement(raw_immediate, UJ_TYPE_IMM_BITS);
 

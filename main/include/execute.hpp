@@ -49,9 +49,9 @@ int programCounterAdder(int sign_extension_offset, int currPC, int pc_plus_4, in
     if (branch_taken){
        return (pc_plus_4 + (sign_extension_offset << 1));
     } else if (jalr){
-        return (rs1 + sign_extension_offset);
+        return (rs1 + (sign_extension_offset << 1));
     } else if (jal){
-        return (currPC + sign_extension_offset);
+        return (currPC + (sign_extension_offset << 1));
     }
 
     return pc_plus_4;
