@@ -81,7 +81,7 @@ void singleCycleCPU(){
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
         int operand1 = (static_cast<bool>(ALUSrc2) ? nextPC : instruction.getRs1Value());   // First operand of ALU operation is from rs1 if ALUSrc2 is false. Otherwise PC.
-                                                                                        // Depends on ALUSrc2 being true if and only if instruction is jalr.
+                                                                                            // Depends on ALUSrc2 being true if and only if instruction is jalr.
                                                                                     
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
