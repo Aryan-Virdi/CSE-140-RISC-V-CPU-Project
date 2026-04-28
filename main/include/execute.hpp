@@ -57,7 +57,7 @@ int programCounterAdder(int sign_extension_offset, int currPC, int pc_plus_4, in
     return pc_plus_4;
 }
 
-int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int& curr_pc, int& pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
+int execute(int alu_intake_1, int alu_intake_2, int alu_control, int sign_extension_offset, int curr_pc, int pc_plus_4, int& alu_zero, bool branch, bool jump, bool PCSrc, int rs1, int& branch_target) {
     int alu_result = ALU(alu_intake_1, alu_intake_2, alu_control, alu_zero);
     branch_target = programCounterAdder(sign_extension_offset, curr_pc, pc_plus_4, alu_zero, branch, jump, PCSrc, rs1);
 
