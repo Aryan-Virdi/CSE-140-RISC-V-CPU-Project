@@ -70,7 +70,7 @@ void singleCycleCPU(){
         uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
-        instruction.printInfo();    // Debug
+        // instruction.printInfo();    // Debug
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
         int operand1 = (static_cast<bool>(ALUSrc2) ? nextPC : instruction.getRs1Value());   // First operand of ALU operation is from rs1 if ALUSrc2 is false. Otherwise PC.
@@ -81,7 +81,11 @@ void singleCycleCPU(){
 
         // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << " pc=" << PC << " nextPC=" << nextPC << std::endl;}  // Debug
         int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
-        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, branch_target);
+        if (static_cast<bool>(branch) && static_cast<bool>(alu_zero) || static_cast<bool>(jump)) {
+            PC = branch_target;
+        } else {
+            PC = nextPC;
+        }
 
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because
