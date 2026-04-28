@@ -61,6 +61,9 @@ int branch_target = 0;
 // Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
 
+// Jal and Jalr control signals are apparently working but the PC is not being incremented correctly.
+// Either branch is indeed being taken but not incremented correctly or something else is incorrect.
+
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
         // controlSignals.updateAllSignals(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -78,6 +81,7 @@ void singleCycleCPU(){
 
         // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << " pc=" << PC << " nextPC=" << nextPC << std::endl;}  // Debug
         int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
+        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, branch_target);
 
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because

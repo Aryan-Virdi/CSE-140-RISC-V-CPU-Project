@@ -33,6 +33,10 @@ uint32_t fetch(int& PC, int& nextPC, int& currPC, const std::vector<uint32_t>& i
     currPC = PC;
     nextPC = PC + 4;
 
+    // std::cout << PC << std::endl;
+    // std::cout << jump << std::endl;
+    // std::cout << nextPC << std::endl;
+
     bool branchTaken = ((branch && aluZero) || jump);
     PC = (branchTaken ? branchTarget : nextPC);
 
