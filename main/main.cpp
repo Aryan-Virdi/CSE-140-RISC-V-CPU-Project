@@ -22,6 +22,8 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
+bool withConventionalNames = false;
+
 int total_clock_cycles = 0;
 
 // CPU's program counter
@@ -107,7 +109,7 @@ void singleCycleCPU(){
         /* WRITEBACK STAGE END */
 
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications();    // Print this cycle's modifications.
+        printQueue.printModifications(withConventionalNames);    // Print this cycle's modifications.
     }
     
     cout << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
@@ -145,7 +147,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 32; i++){ rf[i] = 0; d_mem[i] = 0; }  // Global arrays should be initialized to zero automatically, but here it is done manually just in case.
 
     // Handle terminal arguments accordingly.
-    int processedCode = processArguments(argc, argv, rf, d_mem, pipelined, instructionMemory);
+    int processedCode = processArguments(argc, argv, rf, d_mem, pipelined, instructionMemory, withConventionalNames);
     if (processedCode != SUCCESS){ return processedCode; }  // If there was an error, terminate the program entirely.
 
     if (pipelined){

@@ -84,7 +84,7 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
     Returns:                        Success code on graceful initialization. A specific error code otherwise.                           
 
 */
-int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pipelined, std::vector<uint32_t>& instructionMemory){
+int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pipelined, std::vector<uint32_t>& instructionMemory, bool& withConventionalNames){
     bool optionalArgsPresent;
     if (argc > 2){ optionalArgsPresent = true; }
 
@@ -97,6 +97,7 @@ int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pi
     for (int j = 2; j < argc; j++){
         std::string arg = arguments[j];
         if (arg == "--sample-1"){
+            withConventionalNames = false;
             rf[x1] = 0x20;
             rf[x2] = 0x5;
             rf[x10] = 0x70;
@@ -105,6 +106,7 @@ int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pi
             storeMemory(d_mem, 0x74, 0x10);
             continue;
         } else if (arg == "--sample-2"){
+            withConventionalNames = true;
             rf[s0] = 0x20;
             rf[a0] = 0x5;
             rf[a1] = 0x2;

@@ -3,9 +3,52 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 // Used as index parameter for program counter events.
 const int EMPTY_IDX = -1;
+
+struct NamePairs {
+    int regIdx;
+    std::string regName;
+
+    std::string getName(){ return this->regName; }
+};
+
+std::vector<NamePairs> regNames = {
+    {0,  "zero" },
+    {1,  "ra"   },
+    {2,  "sp"   },
+    {3,  "gp"   },
+    {4,  "tp"   },
+    {5,  "t0"   },
+    {6,  "t1"   },
+    {7,  "t2"   },
+    {8,  "s0"   },
+    {9,  "s1"   },
+    {10, "a0"   },
+    {11, "a1"   },
+    {12, "a2"   },
+    {13, "a3"   },
+    {14, "a4"   },
+    {15, "a5"   },
+    {16, "a6"   },
+    {17, "a7"   },
+    {18, "s2"   },
+    {19, "s3"   },
+    {20, "s4"   },
+    {21, "s5"   },
+    {22, "s6"   },
+    {23, "s7"   },
+    {24, "s8"   },
+    {25, "s9"   },
+    {26, "s10"  },
+    {27, "s11"  },
+    {28, "t3"   },
+    {29, "t4"   },
+    {30, "t5"   },
+    {31, "t6"   }
+}; 
 
 // Enumerates types of locations that can broadcast their changes.
 enum class LocationType{
@@ -45,9 +88,12 @@ class PrintEvent{
         Note:                   Private so that individual elements can not be printed without printing
                                 every element and then clearing.
     */
-    void printModification(ValueLocation location){
-        if (location.isRegFile()){ 
-            std::cout << "x" << location.idx << " is modified to 0x" << std::hex << location.value << std::dec << std::endl;
+    void printModification(ValueLocation location, bool withConventionNames){
+        if (location.isRegFile()){
+            std::string regName = "x" + std::to_string(location.idx);
+            if (withConventionNames){ regName = (regNames.at(location.idx).getName()); }
+
+            std::cout << regName << " is modified to 0x" << std::hex << location.value << std::dec << std::endl;
             return; 
         }
 
@@ -91,9 +137,9 @@ class PrintEvent{
         Description:    Prints the modification information for every change in the queue.
                         The queue is cleared upon completion.
     */
-    void printModifications(){
+    void printModifications(bool withConventionNames){
         for (int idx = this->modificationQueue.size() - 1; idx >= 0; idx--){ 
-            printModification(modificationQueue[idx]); 
+            printModification(modificationQueue[idx], withConventionNames); 
         }
         clearQueue();
         std::cout << std::endl;
