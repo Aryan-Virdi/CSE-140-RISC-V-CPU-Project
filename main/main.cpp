@@ -61,15 +61,12 @@ int branch_target = 0;
 // Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
 
-// Jal and Jalr control signals are apparently working but the PC is not being incremented correctly.
-// Either branch is indeed being taken but not incremented correctly or something else is incorrect.
-
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
 
         /* FETCH STAGE BEGIN */
         
-        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
+        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
 
         /* FETCH STAGE END */
         /* DECODE STAGE BEGIN */
@@ -87,7 +84,7 @@ void singleCycleCPU(){
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
         // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << " pc=" << PC << " nextPC=" << nextPC << std::endl;}  // Debug
-        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
+        int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), branch_target);
         if (static_cast<bool>(branch) && static_cast<bool>(alu_zero) || static_cast<bool>(jump)) {
             PC = branch_target;
         } else {

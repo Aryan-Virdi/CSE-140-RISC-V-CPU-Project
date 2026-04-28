@@ -7,10 +7,12 @@ const int TRUE = 1;
 const int FALSE = 0;
 const int UNKNOWN = -1;
 
+const int numSignals = 10;
+
 // Provides an interface for the control signals.
 // Will have to update to handle additional signal(s) for jal and jalr in the future.
 class IControl{
-    int* ctrlArray[10];
+    int* ctrlArray[numSignals];
 
     enum ControlIndex : int {
         regWrIdx = 0,
@@ -81,14 +83,7 @@ class IControl{
     Parameter ctrlSignals:  A reference to an IControl object, expectedly in main.cpp.
 
     Note:                   ALUOp is updated as shown in the lecture slides and ZyBooks
-
-    Note:                   Jal and Jalr have similar but distinct datapaths. In the future, we may want to implement
-                            these instructions by using the existing Branch control signal instead of making a new,
-                            unique "jump" signal.
-
-                            Both write PC+4 to rd.  Jal adds imm offset of UJ-type to PC
-                                                    Jalr adds imm offset of I-type to its rs1 for branch target.
-                                                    So, we can use PC+imm or Jalr-target as branch_target with "branch" set to true.
+                            We've defined jal's and jalr's ALUOp signals to 0b11 = 3
 */
 void controlUnit(uint32_t opcode, IControl& ctrlSignals){
     switch(opcode){
