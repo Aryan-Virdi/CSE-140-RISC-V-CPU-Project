@@ -86,6 +86,7 @@ void singleCycleCPU(){
         } else {
             PC = nextPC;
         }
+        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because
