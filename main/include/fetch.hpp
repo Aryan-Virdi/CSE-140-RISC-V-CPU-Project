@@ -37,8 +37,8 @@ uint32_t fetch(int& PC, int& nextPC, int& currPC, const std::vector<uint32_t>& i
     // std::cout << jump << std::endl;
     // std::cout << nextPC << std::endl;
 
-    bool branchTaken = ((branch && aluZero) || jump);
-    PC = (branchTaken ? branchTarget : nextPC);
+    // bool branchTaken = ((branch && aluZero) || jump);
+    // PC = (branchTaken ? branchTarget : nextPC);
 
     // printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
