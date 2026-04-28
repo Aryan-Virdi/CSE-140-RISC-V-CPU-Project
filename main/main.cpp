@@ -66,11 +66,18 @@ PrintEvent printQueue = PrintEvent();
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
-        // controlSignals.updateAllSignals(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        /* FETCH STAGE BEGIN */
+        
         uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, branch_target, static_cast<bool>(branch), static_cast<bool>(alu_zero), static_cast<bool>(jump), printQueue);
+
+        /* FETCH STAGE END */
+        /* DECODE STAGE BEGIN */
+
         Instruction instruction = decode(currInstruction, controlSignals, rf);
 
-        // instruction.printInfo();    // Debug
+        /* DECODE STAGE END */
+        /* EXECUTION STAGE BEGIN */
 
         int alu_ctrl = aluControl(ALUOp, instruction.getFunct3(), instruction.getFunct7());
         int operand1 = (static_cast<bool>(ALUSrc2) ? nextPC : instruction.getRs1Value());   // First operand of ALU operation is from rs1 if ALUSrc2 is false. Otherwise PC.
@@ -88,11 +95,19 @@ void singleCycleCPU(){
         }
         printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
+        /* EXECUTION STAGE END */
+        /* MEM STAGE BEGIN */
+
         int data = mem(d_mem, aluResult, instruction.getRs2Value(), static_cast<bool>(memWrite), printQueue);   // Returns an actual d_mem value if memWrite is true.
                                                                                                                 // The value in this function call is the second source register because
                                                                                                                 // memory should only be written into by store-word, which provides the data in RS2.
-        // data = (static_cast<bool>(jump) ? PC : data);
+
+        /* MEM STAGE END */
+        /* WRITEBACK STAGE BEGIN */
+
         writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
+
+        /* WRITEBACK STAGE END */
 
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
         printQueue.printModifications();    // Print this cycle's modifications.
