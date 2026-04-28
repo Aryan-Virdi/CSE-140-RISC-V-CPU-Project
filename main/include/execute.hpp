@@ -41,7 +41,7 @@ int ALU(int alu_intake_1, int alu_intake_2, int alu_control, int& alu_zero){
     return alu_result;
 }
 
-int programCounterAdder(int sign_extension_offset, int currPC, int pc_plus_4, int alu_zero, bool branch, bool jump, bool PCSrc, int rs1){
+int programCounterAdder(int sign_extension_offset, int currPC, int pc_plus_4, int alu_zero, bool branch, bool jump, bool PCSrc, int operand1){
     bool branch_taken = (branch && alu_zero);
     bool jalr = (jump && PCSrc);
     bool jal = jump;
@@ -49,7 +49,7 @@ int programCounterAdder(int sign_extension_offset, int currPC, int pc_plus_4, in
     if (branch_taken){
        return (pc_plus_4 + (sign_extension_offset << 1));
     } else if (jalr){
-        return (rs1 + sign_extension_offset);
+        return (operand1 + sign_extension_offset);
     } else if (jal){
         return (currPC + (sign_extension_offset << 1));
     }
