@@ -185,7 +185,7 @@ class EXE_MEM {
     int getMemWr()        const { return this->memWr;        }
     int getMemToReg()     const { return this-> memToReg;    }
     int getMemRd()        const { return this->memRd;        }
-    int getRs2()          const {return this->rs2;           }
+    int getRs2()          const { return this->rs2;          }
     int getRd()           const { return this->rd;           }
     int getALUZero()      const { return this->aluZero;      }
     int getALUResult()    const { return this->aluResult;    }
