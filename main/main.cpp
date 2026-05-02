@@ -124,6 +124,39 @@ void pipelinedCPU(){
     HazardDetectionUnit hazardDetectionUnit(&if_id_buffer, &id_exe_buffer);
 
     cout << "Hello! o/" << endl;
+
+    /* FETCH BEGIN     */
+
+        // Fetch instruction, assign PC
+        // Must be able to stall pipeline before fetching if necessary.
+
+    /* FETCH END       */
+        // Store PC and instruction info into IF_ID
+    /* DECODE BEGIN    */
+
+        // Decode instruction, generate control signals.
+
+    /* DECODE END      */
+        // Store control signals and operand info into ID_EXE.
+        // May need to update object to store PC.
+    /* EXECUTE BEGIN   */
+
+        // Execute ALU operation and maybe program adder.
+
+    /* EXECUTE END     */
+        // Store relevant ctrl signals and alu_zero into EXE_MEM.
+        // May need to update object to store PC if necessary.
+    /* MEM BEGIN       */
+
+        // Retrieve/store data from/into data memory.
+
+    /* MEM END         */
+        // Store relevant control signals and rd (carried over from before) into MEM_WB.
+    /* WRITEBACK BEGIN */
+
+        // Commit register file changes if allowed by ctrl signals.
+
+    /* WRITEBACK END   */
 }
 
 /*

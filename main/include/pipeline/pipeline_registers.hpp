@@ -97,6 +97,7 @@ class ID_EXE {
     ID_EXE(){}
 
     void updateInfo(IF_ID if_id_reg, IControl controlUnit, int rs2, int rd, int operand1, int operand2, int immediate){
+        // May need to store PC, unless we make all PC logic in fetch again.
         updateRegWr(controlUnit.getRegWr());
         updateBranch(controlUnit.getBranch());
         updateALUSrc(controlUnit.getALUSrc());
