@@ -59,7 +59,6 @@ class IF_ID {
 
     Note that rs2 is saved regardless of operand 2's source.
 */
-
 class ID_EXE {
     // Previously generated ontrol signals
     int regWr = 0;
@@ -105,7 +104,7 @@ class ID_EXE {
         updateMemWr(controlUnit.getMemWr());
         updateMemToReg(controlUnit.getMemToReg());
         updateMemRd(controlUnit.getMemRd());
-        // updateJump(controlUnit.getJump());
+        updateJump(controlUnit.getJump());
         updateRs2(rs2);
         updateRd(rd);
         updateOp1(operand1);
@@ -121,7 +120,7 @@ class ID_EXE {
     int getMemRd()      const { return this->memRd;       }
     int getALUOp()      const { return this->aluOp;       }
     int getJump()       const { return this->jump;        }
-    int getRs2()        const {return this->rs2;          }
+    int getRs2()        const { return this->rs2;         }
     int getRd()         const { return this->rd;          }
     int getOp1()        const { return this->operand1;    }
     int getOp2()        const { return this->operand2;    }
@@ -133,7 +132,6 @@ class ID_EXE {
     register. Branch target is stored here, so it will be
     read and used in EXE stage.
 */
-
 class EXE_MEM {
     // Previously generated control signals
     int regWr = 0;
@@ -198,7 +196,6 @@ class EXE_MEM {
     The final pipeline register. The data regarding writes
     is stored here and then used for WB stage.
 */
-
 class MEM_WB {
     // Previously generated control signals
     int regWr = 0;
