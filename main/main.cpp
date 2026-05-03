@@ -125,46 +125,51 @@ void pipelinedCPU(){
 
     cout << "Hello! o/" << endl;
 
-    /* FETCH BEGIN     */
+    while(true){
+        /* FETCH BEGIN     */
 
-    uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
-        // Must be able to stall pipeline before fetching if necessary.
+        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
+            // Must be able to stall pipeline before fetching if necessary.
 
-    /* FETCH END       */
-    if_id_buffer.updateInfo(PC, nextPC, currInstruction);
-    /* DECODE BEGIN    */
+        /* FETCH END       */
+        if_id_buffer.updateInfo(PC, nextPC, currInstruction);
+        /* DECODE BEGIN    */
 
-    Instruction instruction = decode(currInstruction, controlSignals, rf);
-    int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
-    int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
+        Instruction instruction = decode(currInstruction, controlSignals, rf);
+        int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
+        int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
 
-    /* DECODE END      */
-    id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs2Value());
-    /* EXECUTE BEGIN   */
+        /* DECODE END      */
+        id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs2Value());
+        /* EXECUTE BEGIN   */
 
-    int alu_ctrl = aluControl(ALUOp, id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
-    int aluResult = execute(id_exe_buffer.getOp1(), id_exe_buffer.getOp2(), alu_ctrl, id_exe_buffer.getImm(), id_exe_buffer.getPC(), id_exe_buffer.getNextPC(), alu_zero, static_cast<bool>(id_exe_buffer.getBranch()), static_cast<bool>(id_exe_buffer.getJump()), static_cast<bool>(id_exe_buffer.getPCSrc()), id_exe_buffer.getRs1(), branch_target);
+        int alu_ctrl = aluControl(ALUOp, id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
+        int aluResult = execute(id_exe_buffer.getOp1(), id_exe_buffer.getOp2(), alu_ctrl, id_exe_buffer.getImm(), id_exe_buffer.getPC(), id_exe_buffer.getNextPC(), alu_zero, static_cast<bool>(id_exe_buffer.getBranch()), static_cast<bool>(id_exe_buffer.getJump()), static_cast<bool>(id_exe_buffer.getPCSrc()), id_exe_buffer.getRs1(), branch_target);
 
-    if (static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero) || static_cast<bool>(id_exe_buffer.getJump())) {
-        PC = branch_target;
-    } else {
-        PC = nextPC;
+        if (static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero) || static_cast<bool>(id_exe_buffer.getJump())) {
+            PC = branch_target;
+        } else {
+            PC = id_exe_buffer.getNextPC();
+        }
+        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
+
+        /* EXECUTE END     */
+        exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
+            // May need to update object to store PC if necessary.
+        /* MEM BEGIN       */
+
+        int data = mem(d_mem, exe_mem_buffer.getALUResult(), exe_mem_buffer.getRs2Value(), static_cast<bool>(exe_mem_buffer.getMemWr()), printQueue);
+
+        /* MEM END         */
+        mem_wb_buffer.updateInfo(exe_mem_buffer, data);
+        /* WRITEBACK BEGIN */
+
+        writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), static_cast<bool>(mem_wb_buffer.getRegWr()), static_cast<bool>(mem_wb_buffer.getMemToReg()), rf, mem_wb_buffer.getRd(), total_clock_cycles, printQueue);
+
+        /* WRITEBACK END   */
+        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        printQueue.printModifications(withConventionalNames);    // Print this cycle's modifications.
     }
-
-    /* EXECUTE END     */
-    exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
-        // May need to update object to store PC if necessary.
-    /* MEM BEGIN       */
-
-    int data = mem(d_mem, exe_mem_buffer.getALUResult(), exe_mem_buffer.getRs2Value(), static_cast<bool>(exe_mem_buffer.getMemWr()), printQueue);
-
-    /* MEM END         */
-    mem_wb_buffer.updateInfo(exe_mem_buffer, data);
-    /* WRITEBACK BEGIN */
-
-    writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), static_cast<bool>(mem_wb_buffer.getRegWr()), static_cast<bool>(mem_wb_buffer.getMemToReg()), rf, mem_wb_buffer.getRd(), total_clock_cycles, printQueue);
-
-    /* WRITEBACK END   */
 }
 
 /*
