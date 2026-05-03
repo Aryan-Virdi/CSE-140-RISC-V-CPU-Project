@@ -135,7 +135,7 @@ void pipelinedCPU(){
         if_id_buffer.updateInfo(PC, nextPC, currInstruction);
         /* DECODE BEGIN    */
 
-        Instruction instruction = decode(currInstruction, controlSignals, rf);
+        Instruction instruction = decode(if_id_buffer.getInstr(), controlSignals, rf);
         int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
 
@@ -143,7 +143,7 @@ void pipelinedCPU(){
         id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs2Value());
         /* EXECUTE BEGIN   */
 
-        int alu_ctrl = aluControl(ALUOp, id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
+        int alu_ctrl = aluControl(id_exe_buffer.getALUOp(), id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
         int aluResult = execute(id_exe_buffer.getOp1(), id_exe_buffer.getOp2(), alu_ctrl, id_exe_buffer.getImm(), id_exe_buffer.getPC(), id_exe_buffer.getNextPC(), alu_zero, static_cast<bool>(id_exe_buffer.getBranch()), static_cast<bool>(id_exe_buffer.getJump()), static_cast<bool>(id_exe_buffer.getPCSrc()), id_exe_buffer.getRs1(), branch_target);
 
         if (static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero) || static_cast<bool>(id_exe_buffer.getJump())) {
