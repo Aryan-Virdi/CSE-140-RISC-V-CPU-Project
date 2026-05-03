@@ -20,6 +20,9 @@
     Input will be read and then decoded.
 */
 class IF_ID {
+    // Flag for register having valid data (not stale)
+    bool valid = false;
+
     // Current program counter
     int PC = 0;
 
@@ -30,7 +33,6 @@ class IF_ID {
     uint32_t instruction = 0;
 
     // Source registers
-
     int rs1 = 0;
     int rs2 = 0;
 
@@ -39,6 +41,8 @@ class IF_ID {
     void updateInstr(uint32_t value) { this->instruction = value; }
     void updateRs1(int value)        { this->rs1 = value;         }
     void updateRs2(int value)        { this->rs2 = value;         }
+
+    void updateValid(bool value)     { this->valid = value;       }
 
     public:
     IF_ID(){}
@@ -56,6 +60,8 @@ class IF_ID {
     uint32_t getInstr() const { return this->instruction; }
     int getRs1()        const { return this->rs1;         }
     int getRs2()        const { return this->rs2;         }
+
+    bool getValid()     const { return this->valid;       }
 };
 
 /*
@@ -66,6 +72,9 @@ class IF_ID {
     Note that rs2 is saved regardless of operand 2's source.
 */
 class ID_EXE {
+    // Flag for register having valid data (not stale)
+    bool valid = false;
+
     // Previously generated control signals
     int regWr = 0;
     int branch = 0;
@@ -119,6 +128,8 @@ class ID_EXE {
     void updateFunct7(int value)    { this->funct7 = value;      }
     void updateRs2Value(int value)  { this->rs2Value = value;    }
 
+    void updateValid(bool value)    { this->valid = value;       }
+
     public:
     ID_EXE(){}
 
@@ -167,6 +178,8 @@ class ID_EXE {
     int getFunct3()     const { return this->funct3;      }
     int getFunct7()     const { return this->funct7;      }
     int getRs2Value()   const { return this->rs2Value;    }
+
+    bool getValid()     const { return this->valid;       }
 };
 
 /*
@@ -175,6 +188,8 @@ class ID_EXE {
     read and used in EXE stage.
 */
 class EXE_MEM {
+    // Flag for register having valid data (not stale)
+    bool valid = false;
 
     // PC info
     int PC = 0;
@@ -215,6 +230,8 @@ class EXE_MEM {
     void updateALUResult(int value)    { this->aluResult = value;    }
     void updateBranchTarget(int value) { this->branchTarget = value; }
 
+    void updateValid(bool value)        { this->valid = value;        }
+
     public:
     EXE_MEM(){}
 
@@ -248,6 +265,8 @@ class EXE_MEM {
     int getALUZero()      const { return this->aluZero;      }
     int getALUResult()    const { return this->aluResult;    }
     int getBranchTarget() const { return this->branchTarget; }
+
+    bool getValid()       const { return this->valid;        }
 };
 
 /*
@@ -255,6 +274,9 @@ class EXE_MEM {
     is stored here and then used for WB stage.
 */
 class MEM_WB {
+    // Flag for register having valid data (not stale)
+    bool valid = false;
+
     // Previously generated control signals
     int regWr = 0;
     int memToReg = 0;
@@ -274,6 +296,8 @@ class MEM_WB {
     void updateALUResult(int value) { this->aluResult = value;   }
     void updateMemData(int value)   { this->memData = value;     }
 
+    void updateValid(bool value)    { this->valid = value;       }
+
     public:
     MEM_WB(){}
 
@@ -290,6 +314,8 @@ class MEM_WB {
     int getRd()         const { return this->rd;          }
     int getALUResult()  const { return this->aluResult;   }
     int getMemData()    const { return this->memData;     }
+
+    bool getValid()     const { return this->valid;       }
 };
 
 #endif
