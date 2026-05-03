@@ -50,6 +50,10 @@ class IF_ID {
     uint32_t getInstr() const { return this->instruction; }
     int getRs1()        const { return this->rs1;         }
     int getRs2()        const { return this->rs2;         }
+
+    bool useRs2 const(){
+        
+    }
 };
 
 /*
@@ -60,7 +64,7 @@ class IF_ID {
     Note that rs2 is saved regardless of operand 2's source.
 */
 class ID_EXE {
-    // Previously generated ontrol signals
+    // Previously generated control signals
     int regWr = 0;
     int branch = 0;
     int aluSrc = 0;
@@ -126,6 +130,18 @@ class ID_EXE {
     int getOp1()        const { return this->operand1;    }
     int getOp2()        const { return this->operand2;    }
     int getImm()        const { return this->signExtImm;  }
+
+    void NOP(){
+        regWr = 0;
+        memRd = 0;
+        memWr = 0;
+        memToReg = 0;
+        aluSrc = 0;
+        aluOp = 0;
+        branch = 0;
+        rd = 0;
+        rs2 = 0;
+    }
 };
 
 /*
