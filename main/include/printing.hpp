@@ -70,6 +70,7 @@ struct ValueLocation{
 // Actual interface for adding and executing printable events.
 class PrintEvent{
     std::vector<ValueLocation> modificationQueue;
+    bool printEnabled = true;
 
     /*
         Parameter location:     The location type where the change occurred.
@@ -130,11 +131,16 @@ class PrintEvent{
                         The queue is cleared upon completion.
     */
     void printModifications(bool withConventionNames){
+        if (!printEnabled) { return; }
         for (int idx = this->modificationQueue.size() - 1; idx >= 0; idx--){ 
             printModification(modificationQueue[idx], withConventionNames); 
         }
         clearQueue();
         std::cout << std::endl;
+    }
+
+    void allowPrint(bool shouldPrint){
+        this->printEnabled = shouldPrint;
     }
 };
 
