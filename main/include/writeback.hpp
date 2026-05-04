@@ -25,7 +25,7 @@ void writeback(int alu_result, int mem_read_data, bool reg_write, bool mem_to_re
         if (destination_register != x0){ printQueue.addPrintEvent(LocationType::registerFile, destination_register, value); }   // Print only modifications done to anything other than x0.
     }
 
-    total_clock_cycles++; // Increment clock cycles for writeback stage
+    // total_clock_cycles++; // Increment clock cycles for writeback stage
 }
 
 #endif
