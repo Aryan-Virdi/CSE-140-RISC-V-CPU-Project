@@ -155,6 +155,7 @@ class ID_EXE {
         updateFunct3(funct3);
         updateFunct7(funct7);
         updateRs2Value(rs2Value);
+        updateValid(if_id_reg.getValid());
     }
 
     int getPC()         const { return this->PC;          }
@@ -250,6 +251,7 @@ class EXE_MEM {
         updateALUZero(aluZero);
         updateALUResult(aluResult);
         updateBranchTarget(branchTarget);
+        updateValid(id_exe_reg.getValid());
     }
 
     int getPC()           const { return this->PC;           }
@@ -307,6 +309,7 @@ class MEM_WB {
         updateRd(exe_mem_reg.getRd());
         updateALUResult(exe_mem_reg.getALUResult());
         updateMemData(memData);
+        updateValid(exe_mem_reg.getValid());
     }
 
     int getRegWr()      const { return this->regWr;       }
