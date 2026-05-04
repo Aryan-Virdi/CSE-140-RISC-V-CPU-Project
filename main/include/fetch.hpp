@@ -21,11 +21,12 @@
     Note:                           Assumes that PC is only ever a non-negative integer multiple of 4. 
                                     I.e., PC is either 0 or some multiple of 4.
 */
-uint32_t fetch(int PC, int& nextPC, int& currPC, const std::vector<uint32_t>& instructionMemory, PrintEvent& printQueue){
+uint32_t fetch(int PC, int& nextPC, int& currPC, const std::vector<uint32_t>& instructionMemory, PrintEvent& printQueue, std::string& terminateFlag){
     int memoryIndex = PC / 4;
     if (!(memoryIndex < instructionMemory.size())){;
-        std::cerr << "Exit Code: " << ERROR << std::endl;
-        throw std::runtime_error("Segmentation Fault: Out-of-Bounds memory accessed");
+        // std::cerr << "Exit Code: " << ERROR << std::endl;
+        // throw std::runtime_error("Segmentation Fault: Out-of-Bounds memory accessed");
+        terminateFlag = "TERMINATE";
     }
     
     uint32_t instruction = instructionMemory[memoryIndex];

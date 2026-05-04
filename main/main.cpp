@@ -62,13 +62,15 @@ int branch_target = 0;
 // Queue for printing modifications.
 // Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
+string terminateFlag = "";
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
 
         /* FETCH STAGE BEGIN */
         
-        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
+        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue, terminateFlag);
+        if (terminateFlag == "TERMINATE"){ break; }
 
         /* FETCH STAGE END */
         /* DECODE STAGE BEGIN */
@@ -85,7 +87,6 @@ void singleCycleCPU(){
         int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());  // Second operand of ALU operation is from immediate if ALUSrc is true, otherwise from rs2.
                                                                                                         // Logic depends on ALUSrc being true if and only if the instruction is an I-Type.
 
-        // if (ALUSrc2){std::cout << "alu_ctrl=" << alu_ctrl << " op1=" << operand1 << " op2=" << operand2 << " pc=" << PC << " nextPC=" << nextPC << std::endl;}  // Debug
         int aluResult = execute(operand1, operand2, alu_ctrl, instruction.getImm(), currPC, PC, alu_zero, static_cast<bool>(branch), static_cast<bool>(jump), static_cast<bool>(PCSrc), instruction.getRs1Value(), branch_target);
         if (static_cast<bool>(branch) && static_cast<bool>(alu_zero) || static_cast<bool>(jump)) {
             PC = branch_target;
