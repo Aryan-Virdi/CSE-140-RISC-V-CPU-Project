@@ -42,10 +42,10 @@ class IF_ID {
     void updateRs1(int value)        { this->rs1 = value;         }
     void updateRs2(int value)        { this->rs2 = value;         }
 
-    void updateValid(bool value)     { this->valid = value;       }
-
     public:
     IF_ID(){}
+    
+    void updateValid(bool value)     { this->valid = value;       }
 
     void updateInfo(int PC, int nextPC, uint32_t instruction){
         updatePC(PC);
