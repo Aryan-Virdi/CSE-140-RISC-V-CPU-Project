@@ -122,6 +122,7 @@ class PrintEvent{
         Parameter value:                The associated value of the modification.
     */
     void addPrintEvent(LocationType modifiedLocation, int idx, int value){
+        if (!printEnabled) { return; }
         ValueLocation location = {modifiedLocation, idx, value};
         this->modificationQueue.push_back(location);
     }
