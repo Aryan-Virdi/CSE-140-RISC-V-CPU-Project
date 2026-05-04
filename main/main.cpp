@@ -127,30 +127,30 @@ void pipelinedCPU(){
 
     while(!pipelineDrained(currPC, instructionMemory.size(), if_id_buffer, id_exe_buffer, exe_mem_buffer, mem_wb_buffer)){
         /* WRITEBACK BEGIN */
-        if (mem_wb_buffer.getValid()){
+        if (total_clock_cycles > 4 && mem_wb_buffer.getValid()){
             writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), mem_wb_buffer.getRegWr(), mem_wb_buffer.getMemToReg(), rf, mem_wb_buffer.getRd(), total_clock_cycles, printQueue);
             printQueue.printModifications(withConventionalNames);
         }
-        total_clock_cycles++;
-        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications(withConventionalNames);
+        // total_clock_cycles++;
+        // cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        // printQueue.printModifications(withConventionalNames);
         /* WRITEBACK END */
 
         /* MEM BEGIN */
-        if (exe_mem_buffer.getValid()){
+        if (total_clock_cycles > 3 && exe_mem_buffer.getValid()){
             int data = mem(d_mem, exe_mem_buffer.getALUResult(), exe_mem_buffer.getRs2Value(), static_cast<bool>(exe_mem_buffer.getMemWr()), printQueue);
             mem_wb_buffer.updateInfo(exe_mem_buffer, data);
         } else {
             mem_wb_buffer.updateValid(false);
         }
-        total_clock_cycles++;
-        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications(withConventionalNames);
+        // total_clock_cycles++;
+        // cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        // printQueue.printModifications(withConventionalNames);
         /* MEM END */
 
 
         /* EXE BEGIN */
-        if (id_exe_buffer.getValid()){
+        if (total_clock_cycles > 2 && id_exe_buffer.getValid()){
             int alu_ctrl = aluControl(id_exe_buffer.getALUOp(), id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
             int aluResult = execute(id_exe_buffer.getOp1(), id_exe_buffer.getOp2(), alu_ctrl, id_exe_buffer.getImm(), id_exe_buffer.getPC(), id_exe_buffer.getNextPC(), alu_zero, static_cast<bool>(id_exe_buffer.getBranch()), static_cast<bool>(id_exe_buffer.getJump()), static_cast<bool>(id_exe_buffer.getPCSrc()), id_exe_buffer.getRs1(), branch_target);
             if ((static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero)) || static_cast<bool>(id_exe_buffer.getJump())) {
@@ -161,13 +161,13 @@ void pipelinedCPU(){
         } else {
             exe_mem_buffer.updateValid(false);
         }
-        total_clock_cycles++;
-        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications(withConventionalNames);
+        // total_clock_cycles++;
+        // cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        // printQueue.printModifications(withConventionalNames);
         /* EXE END */
 
         /* DECODE BEGIN */
-        if (if_id_buffer.getValid()){
+        if (total_clock_cycles > 1 && if_id_buffer.getValid()){
             Instruction instruction = decode(if_id_buffer.getInstr(), controlSignals, rf);
             int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
             int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value());
@@ -176,9 +176,9 @@ void pipelinedCPU(){
         } else {
             id_exe_buffer.updateValid(false);
         }
-        total_clock_cycles++;
-        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
-        printQueue.printModifications(withConventionalNames);
+        // total_clock_cycles++;
+        // cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        // printQueue.printModifications(withConventionalNames);
         /* DECODE END */
 
         /* FETCH BEGIN */
@@ -186,8 +186,8 @@ void pipelinedCPU(){
         uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
           // Must be able to stall pipeline before fetching if necessary.
         /* FETCH END */
+
         if_id_buffer.updateInfo(PC, nextPC, currInstruction);
-        printQueue.allowPrint(true);
         bool validInstruction = ((currPC/4) < instructionMemory.size());
         if_id_buffer.updateValid(validInstruction);
 
