@@ -318,4 +318,15 @@ class MEM_WB {
     bool getValid()     const { return this->valid;       }
 };
 
+bool pipelineDrained(int PC, int instrCount, IF_ID if_id, ID_EXE id_exe, EXE_MEM exe_mem, MEM_WB mem_wb){
+    bool outOfBounds = ((PC / 4) >= instrCount);
+    bool pipelineRegistersEmpty = !(
+        if_id.getValid()   &&
+        id_exe.getValid()  &&
+        exe_mem.getValid() &&
+        mem_wb.getValid()
+    );
+    return (outOfBounds && pipelineRegistersEmpty);
+}
+
 #endif
