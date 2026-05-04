@@ -128,8 +128,6 @@ class ID_EXE {
     void updateFunct7(int value)    { this->funct7 = value;      }
     void updateRs2Value(int value)  { this->rs2Value = value;    }
 
-    void updateValid(bool value)    { this->valid = value;       }
-
     public:
     ID_EXE(){}
 
@@ -157,6 +155,8 @@ class ID_EXE {
         updateRs2Value(rs2Value);
         updateValid(if_id_reg.getValid());
     }
+
+    void updateValid(bool value){ this->valid = value;    }
 
     int getPC()         const { return this->PC;          }
     int getNextPC()     const { return this->nextPC;      }
@@ -231,8 +231,6 @@ class EXE_MEM {
     void updateALUResult(int value)    { this->aluResult = value;    }
     void updateBranchTarget(int value) { this->branchTarget = value; }
 
-    void updateValid(bool value)        { this->valid = value;        }
-
     public:
     EXE_MEM(){}
 
@@ -253,6 +251,8 @@ class EXE_MEM {
         updateBranchTarget(branchTarget);
         updateValid(id_exe_reg.getValid());
     }
+
+    void updateValid(bool value){ this->valid = value;       }
 
     int getPC()           const { return this->PC;           }
     int getNextPC()       const { return this->nextPC;       }
@@ -298,8 +298,6 @@ class MEM_WB {
     void updateALUResult(int value) { this->aluResult = value;   }
     void updateMemData(int value)   { this->memData = value;     }
 
-    void updateValid(bool value)    { this->valid = value;       }
-
     public:
     MEM_WB(){}
 
@@ -312,6 +310,7 @@ class MEM_WB {
         updateValid(exe_mem_reg.getValid());
     }
 
+    void updateValid(bool value){ this->valid = value;    }
     int getRegWr()      const { return this->regWr;       }
     int getMemToReg()   const { return this-> memToReg;   }
     int getRd()         const { return this->rd;          }
