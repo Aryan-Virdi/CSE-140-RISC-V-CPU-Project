@@ -116,6 +116,8 @@ void singleCycleCPU(){
 }
 
 void pipelinedCPU(){
+    printQueue.reverseOrderPrinting(true);
+
     IF_ID   if_id_buffer   = IF_ID();
     ID_EXE  id_exe_buffer  = ID_EXE();
     EXE_MEM exe_mem_buffer = EXE_MEM();
@@ -123,6 +125,7 @@ void pipelinedCPU(){
 
     int instructionCount = instructionMemory.size();
     PipelineObject Pipeline = PipelineObject(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer, &mem_wb_buffer, &PC, instructionCount);
+    // ^ Represents the pipeline as a whole for convenience. Currently only used for checking if the pipeline is drained.
 
     HazardDetectionUnit hazardDetectionUnit = HazardDetectionUnit(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer);
 
