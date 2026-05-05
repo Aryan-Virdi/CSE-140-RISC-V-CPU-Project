@@ -211,6 +211,7 @@ void pipelinedCPU(){
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
         printQueue.printModifications(withConventionalNames);    // Print this cycle's modifications.
     }
+    cout << "program terminated:" << endl << "total execution time is " << total_clock_cycles << " cycles" << endl;
 }
 
 /*
