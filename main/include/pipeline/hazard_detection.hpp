@@ -6,11 +6,13 @@
 class HazardDetectionUnit{
     IF_ID* if_id_reg;
     ID_EXE* id_exe_reg;
+    EXE_MEM* exe_mem_reg;
 
     public:
     HazardDetectionUnit(IF_ID* if_id_reg, ID_EXE* id_exe_reg){
         this->if_id_reg = if_id_reg;
         this->id_exe_reg = id_exe_reg;
+        this->exe_mem_reg = exe_mem_reg;
     }
 
     // If true, stall pipeline.
