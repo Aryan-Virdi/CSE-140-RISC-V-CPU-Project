@@ -29,31 +29,31 @@ class HazardDetectionUnit {
     // Private — only used internally by stallPipeline()
     // Using Read-After-Write format
    bool RAW_hazard() {
-    int rs1 = if_id_reg->getRs1(); 
-    int rs2 = if_id_reg->getRs2(); 
+        int rs1 = if_id_reg->getRs1(); 
+        int rs2 = if_id_reg->getRs2(); 
 
-    // Check EXE conflict
-    if (id_exe_reg->getValid()) {
-        int exe_destination = id_exe_reg->getRd();
-        if (exe_destination != 0 && id_exe_reg->getRegWr() == 1) {
-            if (exe_destination == rs1 || exe_destination == rs2) {
-                return true;
+        // Check EXE conflict
+        if (id_exe_reg->getValid()) {
+            int exe_destination = id_exe_reg->getRd();
+            if (exe_destination != 0 && id_exe_reg->getRegWr() == 1) {
+                if (exe_destination == rs1 || exe_destination == rs2) {
+                    return true;
+                }
             }
         }
-    }
 
-    // Check MEM conflict
-    if (exe_mem_reg->getValid()) {
-        int mem_destination = exe_mem_reg->getRd();
-        if (mem_destination != 0 && exe_mem_reg->getRegWr() == 1) {
-            if (mem_destination == rs1 || mem_destination == rs2) {
-                return true;
+        // Check MEM conflict
+        if (exe_mem_reg->getValid()) {
+            int mem_destination = exe_mem_reg->getRd();
+            if (mem_destination != 0 && exe_mem_reg->getRegWr() == 1) {
+                if (mem_destination == rs1 || mem_destination == rs2) {
+                    return true;
+                }
             }
         }
-    }
 
-    return false;
-}
+        return false;
+    }
 
     public:
     HazardDetectionUnit(IF_ID* if_id_reg, ID_EXE* id_exe_reg, EXE_MEM* exe_mem_reg){
