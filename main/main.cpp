@@ -122,9 +122,12 @@ void pipelinedCPU(){
     EXE_MEM exe_mem_buffer = EXE_MEM();
     MEM_WB  mem_wb_buffer  = MEM_WB();
 
+    int instructionCount = instructionMemory.size();
+    PipelineObject Pipeline = PipelineObject(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer, &mem_wb_buffer, &PC, instructionCount);
+
     HazardDetectionUnit hazardDetectionUnit(&if_id_buffer, &id_exe_buffer);
 
-    while(!pipelineDrained(PC, instructionMemory.size(), if_id_buffer, id_exe_buffer, exe_mem_buffer, mem_wb_buffer)){
+    while(!Pipeline.pipelineDrained()){
         /* WRITEBACK BEGIN */
         if (mem_wb_buffer.getValid()){
             writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), mem_wb_buffer.getRegWr(), mem_wb_buffer.getMemToReg(), rf, mem_wb_buffer.getRd(), printQueue);
