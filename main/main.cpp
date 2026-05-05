@@ -163,6 +163,11 @@ void pipelinedCPU(){
                                     );
             if (static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero) || static_cast<bool>(id_exe_buffer.getJump())) { PC = branch_target; }
             // printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
+            if ((id_exe_buffer.getBranch() && alu_zero) || id_exe_buffer.getJump()) {
+                PC = branch_target;
+                if_id_buffer.NOP();   // flush incorrectly fetched instruction
+                id_exe_buffer.NOP();  // flush incorrectly decoded instruction
+            }
 
             exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
             exe_mem_buffer.updateValid(true);
