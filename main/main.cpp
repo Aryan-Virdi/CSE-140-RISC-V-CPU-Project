@@ -125,7 +125,7 @@ void pipelinedCPU(){
     int instructionCount = instructionMemory.size();
     PipelineObject Pipeline = PipelineObject(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer, &mem_wb_buffer, &PC, instructionCount);
 
-    HazardDetectionUnit hazardDetectionUnit(&if_id_buffer, &id_exe_buffer);
+    HazardDetectionUnit hazardDetectionUnit = HazardDetectionUnit(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer);
 
     while(!Pipeline.pipelineDrained()){
         /* WRITEBACK BEGIN */
@@ -144,13 +144,13 @@ void pipelinedCPU(){
         }
         /* MEM END */
 
-        //NOP STUFF HERE
-       if (hazardUnit.stallPipline(){
+        // NOP STUFF HERE
+        if (hazardDetectionUnit.stallPipeline()){
            id_exe_buffer.NOP();
-           else(){
-               id_exe_buffer.updateValid(false);
-       }
-        //adds the NOPS
+        } else {
+            id_exe_buffer.updateValid(false);
+        }
+        // Adds the NOPS
 
         /* EXE BEGIN */
         if (id_exe_buffer.getValid()){
