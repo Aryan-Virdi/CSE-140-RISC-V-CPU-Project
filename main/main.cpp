@@ -69,7 +69,7 @@ void singleCycleCPU(){
 
         /* FETCH STAGE BEGIN */
         
-        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue, terminateFlag);
+        uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
         if (terminateFlag == "TERMINATE"){ break; }
 
         /* FETCH STAGE END */
