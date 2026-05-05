@@ -70,7 +70,7 @@ struct ValueLocation{
 // Actual interface for adding and executing printable events.
 class PrintEvent{
     std::vector<ValueLocation> modificationQueue;
-    bool printEnabled = true;
+    bool reverseOrder = false;
 
     /*
         Parameter location:     The location type where the change occurred.
@@ -122,7 +122,6 @@ class PrintEvent{
         Parameter value:                The associated value of the modification.
     */
     void addPrintEvent(LocationType modifiedLocation, int idx, int value){
-        if (!printEnabled) { return; }
         ValueLocation location = {modifiedLocation, idx, value};
         this->modificationQueue.push_back(location);
     }
@@ -132,16 +131,17 @@ class PrintEvent{
                         The queue is cleared upon completion.
     */
     void printModifications(bool withConventionNames){
-        if (!printEnabled) { return; }
-        for (int idx = this->modificationQueue.size() - 1; idx >= 0; idx--){ 
-            printModification(modificationQueue[idx], withConventionNames); 
+        if (!this->reverseOrder){
+            for (int idx = this->modificationQueue.size() - 1; idx >= 0; idx--){ printModification(modificationQueue[idx], withConventionNames);  }
+        } else {
+            for (int idx = 0; idx < modificationQueue.size(); idx++){ printModification(modificationQueue[idx], withConventionNames); }
         }
         clearQueue();
         std::cout << std::endl;
     }
 
-    void allowPrint(bool shouldPrint){
-        this->printEnabled = shouldPrint;
+    void reverseOrderPrinting(bool flag){
+        this->reverseOrder = flag;
     }
 };
 
