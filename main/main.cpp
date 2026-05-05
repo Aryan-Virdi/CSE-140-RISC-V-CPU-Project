@@ -105,8 +105,8 @@ void singleCycleCPU(){
         /* MEM STAGE END */
         /* WRITEBACK STAGE BEGIN */
 
-        writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), total_clock_cycles, printQueue);
-
+        writeback(aluResult, data, static_cast<bool>(regWrite), static_cast<bool>(memToReg), rf, instruction.getRd(), printQueue);
+        total_clock_cycles++;
         /* WRITEBACK STAGE END */
 
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
@@ -117,47 +117,100 @@ void singleCycleCPU(){
 }
 
 void pipelinedCPU(){
+    printQueue.reverseOrderPrinting(true);
+
     IF_ID   if_id_buffer   = IF_ID();
     ID_EXE  id_exe_buffer  = ID_EXE();
     EXE_MEM exe_mem_buffer = EXE_MEM();
     MEM_WB  mem_wb_buffer  = MEM_WB();
 
-    HazardDetectionUnit hazardDetectionUnit(&if_id_buffer, &id_exe_buffer);
+    int instructionCount = instructionMemory.size();
+    PipelineObject Pipeline = PipelineObject(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer, &mem_wb_buffer, &PC, instructionCount);
+    // ^ Represents the pipeline as a whole for convenience. Currently only used for checking if the pipeline is drained.
 
-    cout << "Hello! o/" << endl;
+    HazardDetectionUnit hazardDetectionUnit = HazardDetectionUnit(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer);
 
-    /* FETCH BEGIN     */
+    while(!Pipeline.pipelineDrained()){
+        bool stall = hazardDetectionUnit.stallPipeline();
 
-        // Fetch instruction, assign PC
-        // Must be able to stall pipeline before fetching if necessary.
+        /* WRITEBACK BEGIN */
+        if (mem_wb_buffer.getValid()){
+            writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), mem_wb_buffer.getRegWr(), mem_wb_buffer.getMemToReg(), rf, mem_wb_buffer.getRd(), printQueue);
+        }
+        /* WRITEBACK END */
 
-    /* FETCH END       */
-        // Store PC and instruction info into IF_ID
-    /* DECODE BEGIN    */
+        /* MEM BEGIN */
+        if (exe_mem_buffer.getValid()){
+            int data = mem(d_mem, exe_mem_buffer.getALUResult(), exe_mem_buffer.getRs2Value(), exe_mem_buffer.getMemWr(), printQueue);
+            mem_wb_buffer.updateInfo(exe_mem_buffer, data);
+            mem_wb_buffer.updateValid(true);
+        } else {
+            mem_wb_buffer.updateValid(false);
+        }
+        /* MEM END */
 
-        // Decode instruction, generate control signals.
+        /* EXE BEGIN */
+        if (id_exe_buffer.getValid()){
+            int alu_ctrl = aluControl(id_exe_buffer.getALUOp(), id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
+            int aluResult = execute(    
+                                        id_exe_buffer.getOp1(),
+                                        id_exe_buffer.getOp2(), alu_ctrl,
+                                        id_exe_buffer.getImm(),
+                                        id_exe_buffer.getPC(),
+                                        id_exe_buffer.getNextPC(),
+                                        alu_zero,
+                                        id_exe_buffer.getBranch(),
+                                        id_exe_buffer.getJump(),
+                                        id_exe_buffer.getPCSrc(),
+                                        id_exe_buffer.getRs1(),
+                                        branch_target
+                                    );
+            if ((id_exe_buffer.getBranch() && alu_zero) || id_exe_buffer.getJump()) {
+                PC = branch_target;
+                if_id_buffer.NOP();   // flush incorrectly fetched instruction
+                id_exe_buffer.NOP();  // flush incorrectly decoded instruction
+            }
 
-    /* DECODE END      */
-        // Store control signals and operand info into ID_EXE.
-        // May need to update object to store PC.
-    /* EXECUTE BEGIN   */
+            exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
+            exe_mem_buffer.updateValid(true);
+        } else {
+            exe_mem_buffer.updateValid(false);
+        }
+        /* EXE END */
+    
+        /* DECODE BEGIN */
+        if (stall){
+            id_exe_buffer.NOP();
+        } else if (if_id_buffer.getValid()){
+            Instruction instruction = decode(if_id_buffer.getInstr(), controlSignals, rf);
+            int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
+            int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
 
-        // Execute ALU operation and maybe program adder.
+            id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs2Value());
+            id_exe_buffer.updateValid(true);
+        } else {
+            id_exe_buffer.updateValid(false);
+        }
+        /* DECODE END */
 
-    /* EXECUTE END     */
-        // Store relevant ctrl signals and alu_zero into EXE_MEM.
-        // May need to update object to store PC if necessary.
-    /* MEM BEGIN       */
+        /* FETCH BEGIN */
+        if (!stall && (PC/4) < instructionCount){
+            uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
+            if_id_buffer.updateInfo(PC, nextPC, currInstruction);
+            if_id_buffer.updateValid(true);
+            PC = nextPC;
 
-        // Retrieve/store data from/into data memory.
+        } else if (!stall){
+            if_id_buffer.updateValid(false);
+        }
+        /* FETCH END */
 
-    /* MEM END         */
-        // Store relevant control signals and rd (carried over from before) into MEM_WB.
-    /* WRITEBACK BEGIN */
+        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
-        // Commit register file changes if allowed by ctrl signals.
-
-    /* WRITEBACK END   */
+        total_clock_cycles++;
+        cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
+        printQueue.printModifications(withConventionalNames);    // Print this cycle's modifications.
+    }
 }
 
 /*
