@@ -3,27 +3,70 @@
 
 #include "pipeline_registers.hpp"
 
-class HazardDetectionUnit{
-    IF_ID* if_id_reg;
-    ID_EXE* id_exe_reg;
+class HazardDetectionUnit {
+    IF_ID*   if_id_reg;
+    ID_EXE*  id_exe_reg;
     EXE_MEM* exe_mem_reg;
 
+    //From Lecture Notes:
+    // ID/EX.MemRead and
+    // ((ID/EX.RegisterRd == IF/ID.RegisterRs1) or
+    //  (ID/EX.RegisterRd == IF/ID.RegisterRs2))
+    // -> stall the pipeline
+    bool load_check_hazard() {
+        int rs1 = if_id_reg->getRs1();
+        int rs2 = if_id_reg->getRs2();
+        int load_destination = id_exe_reg->getRd();
+
+        if (id_exe_reg->getMemRd() == 1)
+            if (load_destination == rs1 || load_destination == rs2)
+                return true;
+
+        return false;
+}
+
+    // Private — only used internally by stallPipeline()
+    // Using Read-And-Write format
+    bool RAW_hazard() {
+        int rs1 = if_id_reg->getRs1(); 
+        int rs2 = if_id_reg->getRs2(); 
+
+        
+        // Check EXE conflict
+        int exe_destination = id_exe_reg->getRd();
+        if (exe_destination != 0 && id_exe_reg->getRegWr() == 1) {
+            if (exe_destination == rs1 || exe_destination == rs2) {
+                return true;
+            }
+        }
+
+        // Check MEM conflict
+        int mem_destination = exe_mem_reg->getRd();
+        if (mem_destination != 0 && exe_mem_reg->getRegWr() == 1) {
+            if (mem_destination == rs1 || mem_destination == rs2) {
+                return true;
+            }
+        }
+
+        return false; // No conflicts
+    }
+
     public:
-    HazardDetectionUnit(IF_ID* if_id_reg, ID_EXE* id_exe_reg){
+    HazardDetectionUnit(IF_ID* if_id_reg, ID_EXE* id_exe_reg, EXE_MEM* exe_mem_reg){
         this->if_id_reg = if_id_reg;
         this->id_exe_reg = id_exe_reg;
         this->exe_mem_reg = exe_mem_reg;
     }
 
-    // If true, stall pipeline.
     bool stallPipeline(){
-        bool memReadAtEXE = static_cast<bool>(id_exe_reg->getMemRd());
-        int id_rd = id_exe_reg->getRd();
-        int if_rs1 = if_id_reg->getRs1();
-        int if_rs2 = if_id_reg->getRs2();
-        bool destRegIsAnOperand = ((id_rd == if_rs1 || id_rd == if_rs2));
+        if (load_check_hazard()){
+            return true;
+        }
+        if (RAW_hazard()) {
+            return true;
+        }
 
-        return (memReadAtEXE && destRegIsAnOperand);
+        return false;
     }
 };
 
