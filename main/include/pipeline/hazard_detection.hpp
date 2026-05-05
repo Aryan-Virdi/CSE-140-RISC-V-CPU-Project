@@ -14,6 +14,7 @@ class HazardDetectionUnit {
     //  (ID/EX.RegisterRd == IF/ID.RegisterRs2))
     // -> stall the pipeline
     bool load_check_hazard() {
+        if (!id_exe_reg->getValid()) return false;
         int rs1 = if_id_reg->getRs1();
         int rs2 = if_id_reg->getRs2();
         int load_destination = id_exe_reg->getRd();
@@ -27,29 +28,32 @@ class HazardDetectionUnit {
 
     // Private — only used internally by stallPipeline()
     // Using Read-And-Write format
-    bool RAW_hazard() {
-        int rs1 = if_id_reg->getRs1(); 
-        int rs2 = if_id_reg->getRs2(); 
+   bool RAW_hazard() {
+    int rs1 = if_id_reg->getRs1(); 
+    int rs2 = if_id_reg->getRs2(); 
 
-        
-        // Check EXE conflict
+    // Check EXE conflict
+    if (id_exe_reg->getValid()) {
         int exe_destination = id_exe_reg->getRd();
         if (exe_destination != 0 && id_exe_reg->getRegWr() == 1) {
             if (exe_destination == rs1 || exe_destination == rs2) {
                 return true;
             }
         }
+    }
 
-        // Check MEM conflict
+    // Check MEM conflict
+    if (exe_mem_reg->getValid()) {
         int mem_destination = exe_mem_reg->getRd();
         if (mem_destination != 0 && exe_mem_reg->getRegWr() == 1) {
             if (mem_destination == rs1 || mem_destination == rs2) {
                 return true;
             }
         }
-
-        return false; // No conflicts
     }
+
+    return false;
+}
 
     public:
     HazardDetectionUnit(IF_ID* if_id_reg, ID_EXE* id_exe_reg, EXE_MEM* exe_mem_reg){
@@ -59,13 +63,8 @@ class HazardDetectionUnit {
     }
 
     bool stallPipeline(){
-        if (load_check_hazard()){
-            return true;
-        }
-        // if (RAW_hazard()) {
-        //     return true;
-        // }
-
+        if (load_check_hazard()) return true;
+        if (RAW_hazard())        return true;
         return false;
     }
 };
