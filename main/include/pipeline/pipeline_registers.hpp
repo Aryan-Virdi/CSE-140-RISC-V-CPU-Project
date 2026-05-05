@@ -62,6 +62,13 @@ class IF_ID {
     int getRs2()        const { return this->rs2;         }
 
     bool getValid()     const { return this->valid;       }
+
+    void NOP(){
+        instruction = 0;
+        rs1 = 0;
+        rs2 = 0;
+        valid = false;
+    }
 };
 
 /*
@@ -182,18 +189,18 @@ class ID_EXE {
 
     bool getValid()     const { return this->valid;       }
 
-void NOP(){
-        regWr = 0;
-        memRd = 0;
-        memWr = 0;
-        memToReg = 0;
-        aluSrc = 0;
-        aluOp = 0;
-        branch = 0;
-        rd = 0;
-        rs2 = 0;
-        valid = false;
-    }
+    void NOP(){
+            regWr = 0;
+            memRd = 0;
+            memWr = 0;
+            memToReg = 0;
+            aluSrc = 0;
+            aluOp = 0;
+            branch = 0;
+            rd = 0;
+            rs2 = 0;
+            valid = false;
+        }
 };
 
 /*
