@@ -27,7 +27,7 @@ class HazardDetectionUnit {
 }
 
     // Private — only used internally by stallPipeline()
-    // Using Read-And-Write format
+    // Using Read-After-Write format
    bool RAW_hazard() {
     int rs1 = if_id_reg->getRs1(); 
     int rs2 = if_id_reg->getRs2(); 
