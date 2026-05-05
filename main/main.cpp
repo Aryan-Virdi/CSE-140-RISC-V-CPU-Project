@@ -143,6 +143,13 @@ void pipelinedCPU(){
         }
         /* MEM END */
 
+        //NOP STUFF HERE
+       if (hazardUnit.stallPipline(){
+           id_exe_buffer.NOP();
+           else(){
+               id_exe_buffer.updateValid(false);
+        //adds the NOPS
+
         /* EXE BEGIN */
         if (id_exe_buffer.getValid()){
             int alu_ctrl = aluControl(id_exe_buffer.getALUOp(), id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
@@ -168,7 +175,7 @@ void pipelinedCPU(){
             exe_mem_buffer.updateValid(false);
         }
         /* EXE END */
-
+    
         /* DECODE BEGIN */
         if (if_id_buffer.getValid()){
             Instruction instruction = decode(if_id_buffer.getInstr(), controlSignals, rf);
