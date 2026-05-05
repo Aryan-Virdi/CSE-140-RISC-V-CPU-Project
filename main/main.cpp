@@ -128,6 +128,8 @@ void pipelinedCPU(){
     HazardDetectionUnit hazardDetectionUnit = HazardDetectionUnit(&if_id_buffer, &id_exe_buffer, &exe_mem_buffer);
 
     while(!Pipeline.pipelineDrained()){
+        bool stall = hazardDetectionUnit.stallPipeline();
+
         /* WRITEBACK BEGIN */
         if (mem_wb_buffer.getValid()){
             writeback(mem_wb_buffer.getALUResult(), mem_wb_buffer.getMemData(), mem_wb_buffer.getRegWr(), mem_wb_buffer.getMemToReg(), rf, mem_wb_buffer.getRd(), printQueue);
@@ -143,14 +145,6 @@ void pipelinedCPU(){
             mem_wb_buffer.updateValid(false);
         }
         /* MEM END */
-
-        // NOP STUFF HERE
-        if (hazardDetectionUnit.stallPipeline()){
-           id_exe_buffer.NOP();
-        } else {
-            id_exe_buffer.updateValid(false);
-        }
-        // Adds the NOPS
 
         /* EXE BEGIN */
         if (id_exe_buffer.getValid()){
@@ -179,7 +173,9 @@ void pipelinedCPU(){
         /* EXE END */
     
         /* DECODE BEGIN */
-        if (if_id_buffer.getValid()){
+        if (stall){
+            id_exe_buffer.NOP();
+        } else if (if_id_buffer.getValid()){
             Instruction instruction = decode(if_id_buffer.getInstr(), controlSignals, rf);
             int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
             int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
@@ -192,12 +188,12 @@ void pipelinedCPU(){
         /* DECODE END */
 
         /* FETCH BEGIN */
-        if ((PC/4) < instructionCount){
+        if (!stall && (PC/4) < instructionCount){
             uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
             if_id_buffer.updateInfo(PC, nextPC, currInstruction);
             if_id_buffer.updateValid(true);
             PC = nextPC;
-        } else {
+        } else if (!stall){
             if_id_buffer.updateValid(false);
         }
         printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);

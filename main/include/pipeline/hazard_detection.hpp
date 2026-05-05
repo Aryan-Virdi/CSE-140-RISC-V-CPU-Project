@@ -62,9 +62,9 @@ class HazardDetectionUnit {
         if (load_check_hazard()){
             return true;
         }
-        if (RAW_hazard()) {
-            return true;
-        }
+        // if (RAW_hazard()) {
+        //     return true;
+        // }
 
         return false;
     }
