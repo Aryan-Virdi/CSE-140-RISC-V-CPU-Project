@@ -148,6 +148,7 @@ void pipelinedCPU(){
            id_exe_buffer.NOP();
            else(){
                id_exe_buffer.updateValid(false);
+       }
         //adds the NOPS
 
         /* EXE BEGIN */
