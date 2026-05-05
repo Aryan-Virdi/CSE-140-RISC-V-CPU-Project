@@ -198,6 +198,7 @@ class ID_EXE {
             aluOp = 0;
             branch = 0;
             rd = 0;
+            rs1 = 0;
             rs2 = 0;
             valid = false;
         }
