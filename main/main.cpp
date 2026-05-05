@@ -162,8 +162,6 @@ void pipelinedCPU(){
                                         id_exe_buffer.getRs1(),
                                         branch_target
                                     );
-            if (static_cast<bool>(id_exe_buffer.getBranch()) && static_cast<bool>(alu_zero) || static_cast<bool>(id_exe_buffer.getJump())) { PC = branch_target; }
-            // printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
             if ((id_exe_buffer.getBranch() && alu_zero) || id_exe_buffer.getJump()) {
                 PC = branch_target;
                 if_id_buffer.NOP();   // flush incorrectly fetched instruction
@@ -198,11 +196,13 @@ void pipelinedCPU(){
             if_id_buffer.updateInfo(PC, nextPC, currInstruction);
             if_id_buffer.updateValid(true);
             PC = nextPC;
+
         } else if (!stall){
             if_id_buffer.updateValid(false);
         }
-        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
         /* FETCH END */
+
+        printQueue.addPrintEvent(LocationType::programCounter, EMPTY_IDX, PC);
 
         total_clock_cycles++;
         cout << "total_clock_cycles " << total_clock_cycles << " :" << endl;
