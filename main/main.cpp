@@ -184,7 +184,7 @@ void pipelinedCPU(){
         /* DECODE END */
 
         /* FETCH BEGIN */
-        if ((PC/4) < instructionMemory.size()){
+        if ((PC/4) < instructionCount){
             uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
             if_id_buffer.updateInfo(PC, nextPC, currInstruction);
             if_id_buffer.updateValid(true);
