@@ -154,7 +154,8 @@ void pipelinedCPU(){
             int alu_ctrl = aluControl(id_exe_buffer.getALUOp(), id_exe_buffer.getFunct3(), id_exe_buffer.getFunct7());
             int aluResult = execute(    
                                         id_exe_buffer.getOp1(),
-                                        id_exe_buffer.getOp2(), alu_ctrl,
+                                        id_exe_buffer.getOp2(), 
+                                        alu_ctrl,
                                         id_exe_buffer.getImm(),
                                         id_exe_buffer.getPC(),
                                         id_exe_buffer.getNextPC(),
@@ -162,13 +163,12 @@ void pipelinedCPU(){
                                         id_exe_buffer.getBranch(),
                                         id_exe_buffer.getJump(),
                                         id_exe_buffer.getPCSrc(),
-                                        id_exe_buffer.getRs1(),
+                                        id_exe_buffer.getRs1Value(),
                                         branch_target
                                     );
             if ((id_exe_buffer.getBranch() && alu_zero) || id_exe_buffer.getJump()) {
                 PC = branch_target;
-                if_id_buffer.NOP();   // flush incorrectly fetched instruction
-                id_exe_buffer.NOP();  // flush incorrectly decoded instruction
+                if_id_buffer.NOP();
             }
 
             exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
@@ -186,7 +186,7 @@ void pipelinedCPU(){
             int operand1 = (static_cast<bool>(ALUSrc2) ? if_id_buffer.getNextPC() : instruction.getRs1Value());
             int operand2 = (static_cast<bool>(ALUSrc) ? instruction.getImm() : instruction.getRs2Value()); 
 
-            id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs2Value());
+            id_exe_buffer.updateInfo(if_id_buffer, controlSignals, instruction.getRd(), operand1, operand2, instruction.getImm(), instruction.getFunct3(), instruction.getFunct7(), instruction.getRs1Value(), instruction.getRs2Value());
             id_exe_buffer.updateValid(true);
         } else {
             id_exe_buffer.updateValid(false);

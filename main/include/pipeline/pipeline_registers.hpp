@@ -111,6 +111,7 @@ class ID_EXE {
     // Instruction info
     int funct3 = 0;
     int funct7 = 0;
+    int rs1Value = 0;
     int rs2Value = 0;
 
     void updatePC(int value)        { this->PC = value;          }
@@ -133,12 +134,13 @@ class ID_EXE {
     void updateSignExtImm(int value){ this->signExtImm = value;  }
     void updateFunct3(int value)    { this->funct3 = value;      }
     void updateFunct7(int value)    { this->funct7 = value;      }
+    void updateRs1Value(int value)  { this->rs1Value = value;    }
     void updateRs2Value(int value)  { this->rs2Value = value;    }
 
     public:
     ID_EXE(){}
 
-    void updateInfo(const IF_ID& if_id_reg, const IControl& controlUnit, int rd, int operand1, int operand2, int immediate, int funct3, int funct7, int rs2Value){
+    void updateInfo(const IF_ID& if_id_reg, const IControl& controlUnit, int rd, int operand1, int operand2, int immediate, int funct3, int funct7, int rs1Value, int rs2Value){
         updatePC(if_id_reg.getPC());
         updateNextPC(if_id_reg.getNextPC());
         updateRegWr(controlUnit.getRegWr());
@@ -159,6 +161,7 @@ class ID_EXE {
         updateSignExtImm(immediate);
         updateFunct3(funct3);
         updateFunct7(funct7);
+        updateRs1Value(rs1Value);
         updateRs2Value(rs2Value);
         updateValid(if_id_reg.getValid());
     }
@@ -185,6 +188,7 @@ class ID_EXE {
     int getImm()        const { return this->signExtImm;  }
     int getFunct3()     const { return this->funct3;      }
     int getFunct7()     const { return this->funct7;      }
+    int getRs1Value()   const { return this->rs1Value;    }
     int getRs2Value()   const { return this->rs2Value;    }
 
     bool getValid()     const { return this->valid;       }
