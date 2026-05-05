@@ -344,4 +344,34 @@ bool pipelineDrained(int PC, int instrCount, IF_ID if_id, ID_EXE id_exe, EXE_MEM
     return (outOfBounds && pipelineRegistersEmpty);
 }
 
+class PipelineObject {
+    IF_ID* if_id_reg;
+    ID_EXE* id_exe_reg;
+    EXE_MEM* exe_mem_reg;
+    MEM_WB* mem_wb_reg;
+    int* PC;
+    int instructionCount;
+
+    public:
+    PipelineObject(IF_ID* if_id, ID_EXE* id_exe, EXE_MEM* exe_mem, MEM_WB* mem_wb, int* PC, int instrCount){
+        this->if_id_reg = if_id;
+        this->id_exe_reg = id_exe;
+        this->exe_mem_reg = exe_mem;
+        this->mem_wb_reg = mem_wb;
+        this->PC = PC;
+        this->instructionCount = instrCount;
+    }
+
+    bool pipelineDrained(){
+        bool outOfBounds = ((*(this->PC) / 4) >= (this->instructionCount));
+        bool pipelineRegistersEmpty = (
+            !this->if_id_reg->getValid()   &&
+            !this->id_exe_reg->getValid()  &&
+            !this->exe_mem_reg->getValid() &&
+            !this->mem_wb_reg->getValid()
+        );
+        return (outOfBounds && pipelineRegistersEmpty);
+    }
+};
+
 #endif
