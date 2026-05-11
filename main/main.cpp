@@ -62,7 +62,6 @@ int branch_target = 0;
 // Queue for printing modifications.
 // Not related to a concrete object on the chip; just a descriptor.
 PrintEvent printQueue = PrintEvent();
-string terminateFlag = "";
 
 void singleCycleCPU(){
     while ((PC/4) < instructionMemory.size()){
@@ -70,7 +69,6 @@ void singleCycleCPU(){
         /* FETCH STAGE BEGIN */
         
         uint32_t currInstruction = fetch(PC, nextPC, currPC, instructionMemory, printQueue);
-        if (terminateFlag == "TERMINATE"){ break; }
 
         /* FETCH STAGE END */
         /* DECODE STAGE BEGIN */
