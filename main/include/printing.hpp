@@ -7,6 +7,8 @@
 
 // Used as index parameter for program counter events.
 const int EMPTY_IDX = -1;
+
+// Conventional registers names.
 std::vector<std::string> regNames = {
     "zero",
     "ra",
@@ -73,13 +75,14 @@ class PrintEvent{
     bool reverseOrder = false;
 
     /*
-        Parameter location:     The location type where the change occurred.
+        Parameter location:             The location type where the change occurred.
+        Parameter withConventionNames:  Boolean used for sample2 output.
 
-        Description:            Checks the element in the queue for which unit broadcasted it.
-                                Prints the modification's information as formatted in the instructions.
+        Description:                    Checks the element in the queue for which unit broadcasted it.
+                                        Prints the modification's information as formatted in the instructions.
 
-        Note:                   Private so that individual elements can not be printed without printing
-                                every element and then clearing.
+        Note:                           Private so that individual elements can not be printed without printing
+                                        every element and then clearing.
     */
     void printModification(ValueLocation location, bool withConventionNames){
         if (location.isRegFile()){

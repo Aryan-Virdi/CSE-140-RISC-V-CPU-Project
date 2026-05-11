@@ -72,16 +72,18 @@ int populateInstructionMemory(std::string fileName, std::vector<uint32_t>& instr
 }
 
 /*
-    Parameter argc:                 An integer representing how many terminal arguments were supplied.
-    Parameter argv[]:               C-style array that holds the terminal arguments.
-    Parameter rf[32]:               A reference to the register file array.
-    Parameter d_mem[32]:            A reference to the data memory array.
-    Parameter pipelined:            A reference to the global boolean pipelined. Determines which architecture to use.
-    Parameter instructionMemory:    A reference to a vector of uint32_t, which represents the machine code instructions.
+    Parameter argc:                     An integer representing how many terminal arguments were supplied.
+    Parameter argv[]:                   C-style array that holds the terminal arguments.
+    Parameter rf[32]:                   A reference to the register file array.
+    Parameter d_mem[32]:                A reference to the data memory array.
+    Parameter pipelined:                A reference to the global boolean pipelined. Determines which architecture to use.
+    Parameter instructionMemory:        A reference to a vector of uint32_t, which represents the machine code instructions.
+    Parameter withConventionalNames:    A reference to a global boolean. Used for sample2 output printing.
 
-    Note:                           Also handles initialization of sample cases and populating instruction memory.
+    Note:                               Also handles initialization of sample cases and populating instruction memory.
+    Note:                               Sample arguments one and two may be initialized together; they are not mutually exclusive.
 
-    Returns:                        Success code on graceful initialization. A specific error code otherwise.                           
+    Returns:                            Success code on graceful initialization. A specific error code otherwise.                           
 
 */
 int processArguments(int argc, char* argv[], int rf[32], int d_mem[32], bool& pipelined, std::vector<uint32_t>& instructionMemory, bool& withConventionalNames){

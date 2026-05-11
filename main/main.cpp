@@ -115,8 +115,10 @@ void singleCycleCPU(){
 }
 
 void pipelinedCPU(){
-    printQueue.reverseOrderPrinting(true);
+    printQueue.reverseOrderPrinting(true);  // Since stages are in reverse-order, and therefore the change logging,
+                                            // reverse the print order of the changes.
 
+    // Pipeline register instantiation.
     IF_ID   if_id_buffer   = IF_ID();
     ID_EXE  id_exe_buffer  = ID_EXE();
     EXE_MEM exe_mem_buffer = EXE_MEM();
@@ -166,7 +168,7 @@ void pipelinedCPU(){
                                     );
             if ((id_exe_buffer.getBranch() && alu_zero) || id_exe_buffer.getJump()) {
                 PC = branch_target;
-                if_id_buffer.NOP();
+                if_id_buffer.NOP(); // Flush incorrectly fetched instructions.
             }
 
             exe_mem_buffer.updateInfo(id_exe_buffer, alu_zero, aluResult, branch_target);
